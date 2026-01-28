@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STELLAR WEB - ULTRA NEON RAVE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(45deg,
+                #ff00ff, #ff0080, #ff0000, #ff8800, #ffff00,
+                #00ff00, #00ffff, #0088ff, #8800ff, #ff00ff
+            );
+            background-size: 400% 400%;
+            animation: raveBackground 2s linear infinite;
+        }
+
+        @keyframes raveBackground {
+            0% { background-position: 0% 50%; filter: brightness(1) saturate(2); }
+            25% { background-position: 50% 100%; filter: brightness(1.2) saturate(2.5); }
+            50% { background-position: 100% 50%; filter: brightness(1) saturate(2); }
+            75% { background-position: 50% 0%; filter: brightness(1.2) saturate(2.5); }
+            100% { background-position: 0% 50%; filter: brightness(1) saturate(2); }
+        }
+
+        canvas {
+            display: block;
+            cursor: crosshair;
+        }
+
+        @keyframes neonPulse {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(255, 0, 255, 0.8),
+                            0 0 40px rgba(255, 0, 255, 0.6),
+                            0 0 60px rgba(255, 0, 255, 0.4),
+                            inset 0 0 20px rgba(255, 0, 255, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(0, 255, 255, 0.9),
+                            0 0 60px rgba(0, 255, 255, 0.7),
+                            0 0 90px rgba(0, 255, 255, 0.5),
+                            inset 0 0 30px rgba(0, 255, 255, 0.3);
+            }
+        }
+
+        @keyframes textGlow {
+            0%, 100% { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor; }
+            50% { text-shadow: 0 0 20px currentColor, 0 0 40px currentColor, 0 0 60px currentColor; }
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { border-color: #ff00ff; }
+            33% { border-color: #00ffff; }
+            66% { border-color: #ffff00; }
+        }
+
+        .stats-panel {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(20, 0, 40, 0.9) 100%);
+            backdrop-filter: blur(15px);
+            border: 3px solid #ff00ff;
+            border-radius: 16px;
+            padding: 20px;
+            color: #00ffff;
+            font-size: 14px;
+            min-width: 200px;
+            animation: neonPulse 1.5s ease-in-out infinite, borderGlow 2s linear infinite;
+        }
+
+        .stats-panel h3 {
+            color: #ff00ff;
+            font-size: 16px;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            animation: textGlow 1s ease-in-out infinite;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 0, 255, 0.5);
+        }
+
+        .stat-row:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #ff66ff;
+            text-shadow: 0 0 10px #ff00ff;
+        }
+
+        .stat-value {
+            color: #00ffff;
+            font-weight: 700;
+            font-size: 16px;
+            text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+        }
+
+        .controls-panel {
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(20, 0, 40, 0.9) 100%);
+            backdrop-filter: blur(15px);
+            border: 3px solid #00ffff;
+            border-radius: 16px;
+            padding: 24px;
+            width: 300px;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            animation: neonPulse 1.5s ease-in-out infinite, borderGlow 2s linear infinite reverse;
+        }
+
+        .controls-panel.collapsed {
+            transform: translateX(calc(100% + 40px));
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .controls-panel h3 {
+            color: #00ffff;
+            font-size: 16px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            animation: textGlow 1s ease-in-out infinite;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .control-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .control-label {
+            color: #ff00ff;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px #ff00ff;
+        }
+
+        .control-value {
+            color: #ffff00;
+            font-size: 12px;
+            font-weight: 700;
+            background: rgba(255, 255, 0, 0.2);
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid #ffff00;
+            text-shadow: 0 0 10px #ffff00;
+            box-shadow: 0 0 10px rgba(255, 255, 0, 0.5);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #ff00ff, #ffff00, #00ffff, #ff00ff);
+            background-size: 300% 100%;
+            animation: sliderGlow 2s linear infinite;
+            outline: none;
+            -webkit-appearance: none;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.6);
+        }
+
+        @keyframes sliderGlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 0 15px #ff00ff, 0 0 30px #ff00ff, 0 0 45px #00ffff;
+            transition: transform 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.3);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 15px #ff00ff, 0 0 30px #ff00ff, 0 0 45px #00ffff;
+        }
+
+        .toggle-button {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+            border: 3px solid #ffff00;
+            border-radius: 12px;
+            padding: 14px 24px;
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            text-shadow: 0 0 10px #ffffff;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.8), 0 0 40px rgba(0, 255, 255, 0.6);
+            animation: borderGlow 1s linear infinite;
+        }
+
+        .toggle-button:hover {
+            transform: scale(1.1) translateY(-3px);
+        }
+
+        @media (max-width: 768px) {
+            .controls-panel { width: 260px; padding: 16px; }
+            .stats-panel { left: 10px; top: 10px; padding: 12px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+
+    <div class="stats-panel">
+        <h3>Network Stats</h3>
+        <div class="stat-row">
+            <span class="stat-label">Total Nodes</span>
+            <span class="stat-value" id="statNodes">0</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Total Edges</span>
+            <span class="stat-value" id="statEdges">0</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Avg Connections</span>
+            <span class="stat-value" id="statAvgConn">0</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Network Density</span>
+            <span class="stat-value" id="statDensity">0%</span>
+        </div>
+    </div>
+
+    <div class="controls-panel" id="controlsPanel">
+        <h3>Controls</h3>
+
+        <div class="control-group">
+            <div class="control-header">
+                <span class="control-label">Node Count</span>
+                <span class="control-value" id="nodeCountValue">100</span>
+            </div>
+            <input type="range" id="nodeCount" min="20" max="300" value="100" step="10">
+        </div>
+
+        <div class="control-group">
+            <div class="control-header">
+                <span class="control-label">Connectivity Radius</span>
+                <span class="control-value" id="connectRadiusValue">150</span>
+            </div>
+            <input type="range" id="connectRadius" min="50" max="400" value="150" step="10">
+        </div>
+
+        <div class="control-group">
+            <div class="control-header">
+                <span class="control-label">Node Size</span>
+                <span class="control-value" id="nodeSizeValue">3</span>
+            </div>
+            <input type="range" id="nodeSize" min="1" max="8" value="3" step="0.5">
+        </div>
+
+        <div class="control-group">
+            <div class="control-header">
+                <span class="control-label">Node Speed</span>
+                <span class="control-value" id="nodeSpeedValue">0.5</span>
+            </div>
+            <input type="range" id="nodeSpeed" min="0.1" max="2" value="0.5" step="0.1">
+        </div>
+
+        <div class="control-group">
+            <div class="control-header">
+                <span class="control-label">Edge Thickness</span>
+                <span class="control-value" id="edgeThicknessValue">1.0</span>
+            </div>
+            <input type="range" id="edgeThickness" min="0.2" max="3" value="1" step="0.2">
+        </div>
+
+        <div class="control-group">
+            <div class="control-header">
+                <span class="control-label">Edge Opacity</span>
+                <span class="control-value" id="edgeOpacityValue">0.6</span>
+            </div>
+            <input type="range" id="edgeOpacity" min="0.1" max="1" value="0.6" step="0.05">
+        </div>
+
+        <div class="control-group">
+            <div class="control-header">
+                <span class="control-label">3D Depth Effect</span>
+                <span class="control-value" id="depthRangeValue">200</span>
+            </div>
+            <input type="range" id="depthRange" min="0" max="500" value="200" step="50">
+        </div>
+    </div>
+
+    <button class="toggle-button" id="toggleButton">Hide Controls</button>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+
+        const config = {
+            nodeCount: 100,
+            connectRadius: 150,
+            nodeSize: 3,
+            nodeSpeed: 0.5,
+            edgeThickness: 1.0,
+            edgeOpacity: 0.6,
+            depthRange: 200
+        };
+
+        const nodes = [];
+        const fireworks = [];
+        let totalEdges = 0;
+        let time = 0;
+        let targetNodeCount = 100; // Target to regenerate towards
+
+        // Firework particle class
+        class FireworkParticle {
+            constructor(x, y, hue) {
+                this.x = x;
+                this.y = y;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 2 + Math.random() * 8;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.hue = hue + Math.random() * 60 - 30;
+                this.alpha = 1;
+                this.size = 2 + Math.random() * 3;
+                this.gravity = 0.15;
+                this.friction = 0.98;
+                this.decay = 0.015 + Math.random() * 0.01;
+                this.trail = [];
+            }
+
+            update() {
+                // Store trail positions
+                this.trail.push({ x: this.x, y: this.y, alpha: this.alpha });
+                if (this.trail.length > 8) this.trail.shift();
+
+                this.vy += this.gravity;
+                this.vx *= this.friction;
+                this.vy *= this.friction;
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= this.decay;
+            }
+
+            draw() {
+                // Draw trail
+                for (let i = 0; i < this.trail.length; i++) {
+                    const t = this.trail[i];
+                    const trailAlpha = (i / this.trail.length) * this.alpha * 0.5;
+                    ctx.beginPath();
+                    ctx.arc(t.x, t.y, this.size * 0.5, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsla(${this.hue}, 100%, 70%, ${trailAlpha})`;
+                    ctx.fill();
+                }
+
+                // Draw particle with glow
+                const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 3);
+                gradient.addColorStop(0, `hsla(${this.hue}, 100%, 90%, ${this.alpha})`);
+                gradient.addColorStop(0.4, `hsla(${this.hue}, 100%, 60%, ${this.alpha * 0.6})`);
+                gradient.addColorStop(1, 'transparent');
+
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+
+                // Bright core
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${this.hue}, 100%, 95%, ${this.alpha})`;
+                ctx.fill();
+            }
+        }
+
+        function createFirework(x, y, hue) {
+            const shapeRoll = Math.random();
+
+            if (shapeRoll < 0.08) {
+                // Heart shape firework (8% chance)
+                createHeartFirework(x, y, hue);
+            } else if (shapeRoll < 0.16) {
+                // Smiley face firework (8% chance)
+                createSmileyFirework(x, y, hue);
+            } else {
+                // Regular burst (84% chance)
+                const particleCount = 40 + Math.floor(Math.random() * 30);
+                for (let i = 0; i < particleCount; i++) {
+                    fireworks.push(new FireworkParticle(x, y, hue));
+                }
+            }
+        }
+
+        function createHeartFirework(x, y, hue) {
+            const scale = 8;
+            const particleCount = 70;
+
+            for (let i = 0; i < particleCount; i++) {
+                const t = (i / particleCount) * Math.PI * 2;
+                // Heart parametric equation
+                const heartX = 16 * Math.pow(Math.sin(t), 3);
+                const heartY = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+
+                const particle = new FireworkParticle(x, y, hue);
+                particle.vx = heartX * scale * 0.15;
+                particle.vy = heartY * scale * 0.15;
+                particle.gravity = 0.05;
+                particle.friction = 0.96;
+                particle.decay = 0.012;
+                fireworks.push(particle);
+            }
+        }
+
+        function createSmileyFirework(x, y, hue) {
+            const scale = 5;
+
+            // Face outline (circle)
+            for (let i = 0; i < 40; i++) {
+                const angle = (i / 40) * Math.PI * 2;
+                const particle = new FireworkParticle(x, y, hue);
+                particle.vx = Math.cos(angle) * scale * 1.5;
+                particle.vy = Math.sin(angle) * scale * 1.5;
+                particle.gravity = 0.03;
+                particle.friction = 0.97;
+                particle.decay = 0.01;
+                fireworks.push(particle);
+            }
+
+            // Left eye
+            for (let i = 0; i < 8; i++) {
+                const angle = (i / 8) * Math.PI * 2;
+                const particle = new FireworkParticle(x, y, hue);
+                particle.vx = Math.cos(angle) * scale * 0.3 - scale * 0.5;
+                particle.vy = Math.sin(angle) * scale * 0.3 - scale * 0.5;
+                particle.gravity = 0.03;
+                particle.friction = 0.97;
+                particle.decay = 0.01;
+                fireworks.push(particle);
+            }
+
+            // Right eye
+            for (let i = 0; i < 8; i++) {
+                const angle = (i / 8) * Math.PI * 2;
+                const particle = new FireworkParticle(x, y, hue);
+                particle.vx = Math.cos(angle) * scale * 0.3 + scale * 0.5;
+                particle.vy = Math.sin(angle) * scale * 0.3 - scale * 0.5;
+                particle.gravity = 0.03;
+                particle.friction = 0.97;
+                particle.decay = 0.01;
+                fireworks.push(particle);
+            }
+
+            // Smile (arc)
+            for (let i = 0; i < 15; i++) {
+                const angle = (i / 14) * Math.PI + Math.PI * 0.1; // Bottom arc
+                const particle = new FireworkParticle(x, y, hue);
+                particle.vx = Math.cos(angle) * scale * 0.8;
+                particle.vy = Math.sin(angle) * scale * 0.8 + scale * 0.3;
+                particle.gravity = 0.03;
+                particle.friction = 0.97;
+                particle.decay = 0.01;
+                fireworks.push(particle);
+            }
+        }
+
+        class Node {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.z = (Math.random() - 0.5) * config.depthRange;
+
+                const angle = Math.random() * Math.PI * 2;
+                this.vx = Math.cos(angle) * config.nodeSpeed;
+                this.vy = Math.sin(angle) * config.nodeSpeed;
+                this.vz = (Math.random() - 0.5) * config.nodeSpeed * 0.5;
+
+                this.hueOffset = Math.random() * 360;
+                this.pulseOffset = Math.random() * Math.PI * 2;
+                this.depthScale = 1;
+            }
+
+            update() {
+                this.x += this.vx * config.nodeSpeed;
+                this.y += this.vy * config.nodeSpeed;
+                this.z += this.vz * config.nodeSpeed;
+
+                // Wrap edges
+                if (this.x < 0) this.x += width;
+                if (this.x > width) this.x -= width;
+                if (this.y < 0) this.y += height;
+                if (this.y > height) this.y -= height;
+
+                // Bounce z
+                const halfDepth = config.depthRange / 2;
+                if (this.z < -halfDepth || this.z > halfDepth) {
+                    this.vz *= -1;
+                    this.z = Math.max(-halfDepth, Math.min(halfDepth, this.z));
+                }
+
+                // Calculate depth scale
+                if (config.depthRange === 0) {
+                    this.depthScale = 1;
+                } else {
+                    this.depthScale = 0.5 + ((this.z + halfDepth) / config.depthRange) * 0.5;
+                }
+            }
+
+            draw() {
+                const size = config.nodeSize * this.depthScale;
+                const alpha = 0.7 + this.depthScale * 0.3;
+                const hue = (this.hueOffset + time * 3) % 360;
+                const pulse = 1 + Math.sin(time * 0.1 + this.pulseOffset) * 0.2;
+                const glowSize = size * 4 * pulse;
+
+                // Optimized single gradient glow
+                const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, glowSize);
+                gradient.addColorStop(0, `hsla(${hue}, 100%, 90%, ${alpha})`);
+                gradient.addColorStop(0.3, `hsla(${hue}, 100%, 60%, ${alpha * 0.5})`);
+                gradient.addColorStop(1, 'transparent');
+
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, glowSize, 0, Math.PI * 2);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+
+                // Bright core
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, size, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff';
+                ctx.fill();
+            }
+        }
+
+        function initNodes() {
+            nodes.length = 0;
+            for (let i = 0; i < config.nodeCount; i++) {
+                nodes.push(new Node());
+            }
+            targetNodeCount = config.nodeCount;
+        }
+
+        function regenerateNodes() {
+            // Spawn new nodes to reach target count
+            if (nodes.length < targetNodeCount) {
+                // Add 5-8 nodes per cycle when below target
+                const toAdd = Math.min(8, targetNodeCount - nodes.length);
+                for (let i = 0; i < toAdd; i++) {
+                    nodes.push(new Node());
+                }
+                // Update UI
+                document.getElementById('nodeCount').value = nodes.length;
+                document.getElementById('nodeCountValue').textContent = nodes.length;
+            }
+        }
+
+        function checkCollisions() {
+            const collisionDist = 15; // Distance for collision
+            const collisionDistSq = collisionDist * collisionDist;
+            const toRemove = new Set();
+
+            for (let i = 0; i < nodes.length; i++) {
+                if (toRemove.has(i)) continue;
+                const n1 = nodes[i];
+                for (let j = i + 1; j < nodes.length; j++) {
+                    if (toRemove.has(j)) continue;
+                    const n2 = nodes[j];
+                    const dx = n1.x - n2.x;
+                    const dy = n1.y - n2.y;
+                    const distSq = dx * dx + dy * dy; // Only 2D for collisions
+
+                    if (distSq < collisionDistSq) {
+                        // Collision! Create fireworks at midpoint
+                        const midX = (n1.x + n2.x) / 2;
+                        const midY = (n1.y + n2.y) / 2;
+                        const hue1 = (n1.hueOffset + time * 3) % 360;
+                        const hue2 = (n2.hueOffset + time * 3) % 360;
+
+                        // Create two explosions with mixed colors
+                        createFirework(midX, midY, hue1);
+                        createFirework(midX, midY, hue2);
+
+                        toRemove.add(i);
+                        toRemove.add(j);
+                    }
+                }
+            }
+
+            // Remove collided nodes (reverse order to maintain indices)
+            const removeIndices = Array.from(toRemove).sort((a, b) => b - a);
+            for (const idx of removeIndices) {
+                nodes.splice(idx, 1);
+            }
+
+            // Update UI if nodes were removed
+            if (removeIndices.length > 0) {
+                config.nodeCount = nodes.length;
+                document.getElementById('nodeCount').value = nodes.length;
+                document.getElementById('nodeCountValue').textContent = nodes.length;
+            }
+        }
+
+        function drawEdges() {
+            totalEdges = 0;
+            ctx.lineCap = 'round';
+            const radiusSq = config.connectRadius * config.connectRadius;
+
+            for (let i = 0; i < nodes.length; i++) {
+                const n1 = nodes[i];
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const n2 = nodes[j];
+                    const dx = n1.x - n2.x;
+                    const dy = n1.y - n2.y;
+                    const dz = n1.z - n2.z;
+                    const distSq = dx * dx + dy * dy + dz * dz;
+
+                    if (distSq < radiusSq) {
+                        totalEdges++;
+                        const dist = Math.sqrt(distSq);
+                        const avgScale = (n1.depthScale + n2.depthScale) * 0.5;
+                        const distRatio = dist / config.connectRadius;
+                        const opacity = (1 - distRatio) * config.edgeOpacity * avgScale;
+
+                        const hue1 = (n1.hueOffset + time * 3) % 360;
+                        const hue2 = (n2.hueOffset + time * 3) % 360;
+
+                        const gradient = ctx.createLinearGradient(n1.x, n1.y, n2.x, n2.y);
+                        gradient.addColorStop(0, `hsla(${hue1}, 100%, 65%, ${opacity})`);
+                        gradient.addColorStop(1, `hsla(${hue2}, 100%, 65%, ${opacity})`);
+
+                        ctx.beginPath();
+                        ctx.moveTo(n1.x, n1.y);
+                        ctx.lineTo(n2.x, n2.y);
+                        ctx.strokeStyle = gradient;
+                        ctx.lineWidth = config.edgeThickness * avgScale * 1.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('statNodes').textContent = nodes.length;
+            document.getElementById('statEdges').textContent = totalEdges;
+            document.getElementById('statAvgConn').textContent = nodes.length > 0 ? ((totalEdges * 2) / nodes.length).toFixed(1) : 0;
+            const maxEdges = (nodes.length * (nodes.length - 1)) / 2;
+            document.getElementById('statDensity').textContent = maxEdges > 0 ? ((totalEdges / maxEdges) * 100).toFixed(1) + '%' : '0%';
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            time++;
+
+            // Dark trail for motion blur
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.12)';
+            ctx.fillRect(0, 0, width, height);
+
+            drawEdges();
+
+            for (let i = 0; i < nodes.length; i++) {
+                nodes[i].update();
+                nodes[i].draw();
+            }
+
+            // Check for node collisions
+            checkCollisions();
+
+            // Regenerate nodes frequently
+            if (time % 3 === 0) {
+                regenerateNodes();
+            }
+
+            // Update and draw fireworks
+            for (let i = fireworks.length - 1; i >= 0; i--) {
+                fireworks[i].update();
+                fireworks[i].draw();
+                if (fireworks[i].alpha <= 0) {
+                    fireworks.splice(i, 1);
+                }
+            }
+
+            updateStats();
+        }
+
+        // Click handler for fireworks
+        canvas.addEventListener('click', (e) => {
+            const clickX = e.clientX;
+            const clickY = e.clientY;
+            const clickRadius = 30; // How close you need to click
+
+            for (let i = nodes.length - 1; i >= 0; i--) {
+                const node = nodes[i];
+                const dx = node.x - clickX;
+                const dy = node.y - clickY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < clickRadius) {
+                    // Get the node's current hue
+                    const hue = (node.hueOffset + time * 3) % 360;
+                    // Create firework explosion
+                    createFirework(node.x, node.y, hue);
+                    // Remove the node
+                    nodes.splice(i, 1);
+                    // Update config to match
+                    config.nodeCount = nodes.length;
+                    document.getElementById('nodeCount').value = nodes.length;
+                    document.getElementById('nodeCountValue').textContent = nodes.length;
+                    break; // Only explode one node per click
+                }
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        });
+
+        // Control bindings
+        const controls = ['nodeCount', 'connectRadius', 'nodeSize', 'nodeSpeed', 'edgeThickness', 'edgeOpacity', 'depthRange'];
+        const isInt = { nodeCount: true, connectRadius: true, depthRange: true };
+
+        controls.forEach(name => {
+            const el = document.getElementById(name);
+            el.addEventListener('input', e => {
+                const val = isInt[name] ? parseInt(e.target.value) : parseFloat(e.target.value);
+                config[name] = val;
+                document.getElementById(name + 'Value').textContent = val;
+
+                if (name === 'nodeCount') {
+                    targetNodeCount = val; // Update target for regeneration
+                    while (nodes.length < val) nodes.push(new Node());
+                    while (nodes.length > val) nodes.pop();
+                }
+            });
+        });
+
+        // Toggle controls
+        const toggleButton = document.getElementById('toggleButton');
+        const controlsPanel = document.getElementById('controlsPanel');
+        let visible = true;
+
+        toggleButton.addEventListener('click', () => {
+            visible = !visible;
+            controlsPanel.classList.toggle('collapsed', !visible);
+            toggleButton.textContent = visible ? 'Hide Controls' : 'Show Controls';
+        });
+
+        initNodes();
+        animate();
+    </script>
+</body>
+</html>
