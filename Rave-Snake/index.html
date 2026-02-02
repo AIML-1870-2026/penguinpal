@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rave Snake</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Main Menu -->
+    <div id="mainMenu" class="overlay">
+        <div class="menu">
+            <h1>RAVE SNAKE</h1>
+            <h2>Neon Serpent Madness</h2>
+            <div class="mode-select">
+                <label>Select Game Mode:</label>
+                <select id="gameMode">
+                    <option value="classic">Classic - Reach 30 segments</option>
+                    <option value="timeTrial">Time Trial - Survive 2 minutes</option>
+                    <option value="scoreRush">Score Rush - Reach 500 points</option>
+                    <option value="endless">Endless - How long can you survive?</option>
+                    <option value="speedDemon">Speed Demon - Increasing speed</option>
+                </select>
+            </div>
+            <button class="menu-btn" onclick="startGame()">START GAME</button>
+            <div class="controls-info">
+                <p><span>Arrow Keys</span> or <span>WASD</span> - Move</p>
+                <p><span>Mouse</span> - Alternative control</p>
+                <p><span>Space</span> - Pause</p>
+                <p><span>C</span> - Toggle control mode</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over -->
+    <div id="gameOver" class="overlay hidden">
+        <div class="menu game-over-content">
+            <h2>GAME OVER</h2>
+            <div class="stats">
+                <p>Score: <span id="finalScore">0</span></p>
+                <p>Length: <span id="finalLength">0</span></p>
+                <p>Time: <span id="finalTime">0:00</span></p>
+                <p id="objectiveStatus"></p>
+            </div>
+            <p id="newRecord" class="new-record" style="display: none;">NEW HIGH SCORE!</p>
+            <button class="menu-btn" onclick="startGame()">PLAY AGAIN</button>
+            <button class="menu-btn" onclick="showMenu()">MAIN MENU</button>
+        </div>
+    </div>
+
+    <!-- Game Container -->
+    <div class="game-container">
+        <div class="hud">
+            <div class="hud-item">Score: <span id="score">0</span></div>
+            <div class="hud-item objective" id="objective">Classic: Reach 30 segments</div>
+            <div class="hud-item">Length: <span id="length">3</span></div>
+            <div class="hud-item">Time: <span id="time">0:00</span></div>
+        </div>
+        <div style="position: relative;">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+            <button class="control-toggle" id="controlToggle">Controls: Keyboard</button>
+            <div class="pause-indicator" id="pauseIndicator">PAUSED</div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
