@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>penguinpal - AIML 1870 Portfolio</title>
+    <title>🐧 penguinpal - RAVE PORTFOLIO 🎮</title>
     <style>
         * {
             margin: 0;
@@ -13,41 +13,147 @@
 
         body {
             font-family: 'Courier New', monospace;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #000;
             min-height: 100vh;
             padding: 40px 20px;
             color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated rave background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%,
+                hsl(280, 100%, 50%) 0%,
+                hsl(320, 100%, 45%) 50%,
+                hsl(200, 100%, 40%) 100%);
+            animation: backgroundShift 10s ease-in-out infinite;
+            z-index: -2;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.1) 2px,
+                rgba(0, 0, 0, 0.1) 4px
+            );
+            animation: scanlines 0.1s linear infinite;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% {
+                filter: hue-rotate(0deg) brightness(1);
+            }
+            25% {
+                filter: hue-rotate(90deg) brightness(1.2);
+            }
+            50% {
+                filter: hue-rotate(180deg) brightness(0.9);
+            }
+            75% {
+                filter: hue-rotate(270deg) brightness(1.1);
+            }
+        }
+
+        @keyframes scanlines {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 0 4px;
+            }
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
         header {
             text-align: center;
             margin-bottom: 60px;
-            animation: fadeInDown 0.8s ease-out;
+            animation: fadeInDown 0.8s ease-out, pulse 2s ease-in-out infinite;
         }
 
         h1 {
-            font-size: 3.5em;
+            font-size: 4em;
             margin-bottom: 10px;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5),
-                         0 0 40px rgba(255, 0, 255, 0.3);
-            animation: glow 2s ease-in-out infinite alternate;
+            background: linear-gradient(90deg, #ff00ff, #00ffff, #ffff00, #ff00ff);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: rainbowText 3s linear infinite, glow 1.5s ease-in-out infinite alternate;
+            text-shadow: 0 0 30px rgba(255, 0, 255, 0.8),
+                         0 0 60px rgba(0, 255, 255, 0.6),
+                         0 0 90px rgba(255, 255, 0, 0.4);
+            filter: drop-shadow(0 0 20px rgba(255, 0, 255, 0.8));
+        }
+
+        @keyframes rainbowText {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 300% 50%;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
         }
 
         .subtitle {
-            font-size: 1.2em;
-            opacity: 0.9;
-            margin-bottom: 5px;
+            font-size: 1.4em;
+            margin-bottom: 10px;
+            color: #00ffff;
+            text-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff;
+            animation: flicker 3s ease-in-out infinite;
         }
 
         .gamertag {
-            font-size: 1em;
-            opacity: 0.7;
+            font-size: 1.2em;
+            color: #ff00ff;
             font-style: italic;
+            text-shadow: 0 0 15px #ff00ff;
+            animation: neonPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        @keyframes neonPulse {
+            0%, 100% {
+                text-shadow: 0 0 15px #ff00ff, 0 0 30px #ff00ff;
+            }
+            50% {
+                text-shadow: 0 0 25px #ff00ff, 0 0 50px #ff00ff, 0 0 75px #ff00ff;
+            }
         }
 
         .projects-grid {
@@ -58,79 +164,164 @@
         }
 
         .project-card {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(10px);
-            border-radius: 15px;
+            border-radius: 20px;
             padding: 30px;
             transition: all 0.3s ease;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            animation: fadeInUp 0.8s ease-out;
+            border: 3px solid;
+            animation: fadeInUp 0.8s ease-out, borderRainbow 4s linear infinite;
             animation-fill-mode: both;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
 
-        .project-card:nth-child(1) { animation-delay: 0.1s; }
-        .project-card:nth-child(2) { animation-delay: 0.2s; }
-        .project-card:nth-child(3) { animation-delay: 0.3s; }
-        .project-card:nth-child(4) { animation-delay: 0.4s; }
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                transparent,
+                rgba(255, 0, 255, 0.3),
+                transparent 30%
+            );
+            animation: rotate 4s linear infinite;
+        }
+
+        .project-card::after {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 17px;
+            z-index: 0;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .project-card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .project-card:nth-child(1) {
+            animation-delay: 0.1s;
+            border-color: #ff00ff;
+        }
+        .project-card:nth-child(2) {
+            animation-delay: 0.2s;
+            border-color: #00ffff;
+        }
+        .project-card:nth-child(3) {
+            animation-delay: 0.3s;
+            border-color: #ffff00;
+        }
+        .project-card:nth-child(4) {
+            animation-delay: 0.4s;
+            border-color: #00ff00;
+        }
+
+        @keyframes borderRainbow {
+            0%, 100% {
+                box-shadow: 0 0 30px currentColor, 0 0 60px currentColor;
+            }
+            50% {
+                box-shadow: 0 0 50px currentColor, 0 0 100px currentColor, 0 0 150px currentColor;
+            }
+        }
 
         .project-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            border-color: rgba(255, 255, 255, 0.5);
-            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
         }
 
         .project-card h2 {
-            font-size: 1.8em;
+            font-size: 2em;
             margin-bottom: 15px;
-            color: #fff;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            background: linear-gradient(45deg, #fff, currentColor);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 10px currentColor);
+            animation: titlePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% {
+                filter: drop-shadow(0 0 10px currentColor);
+            }
+            50% {
+                filter: drop-shadow(0 0 20px currentColor);
+            }
         }
 
         .project-card p {
             margin-bottom: 20px;
             line-height: 1.6;
-            opacity: 0.9;
+            color: #fff;
         }
 
         .project-link {
             display: inline-block;
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 35px;
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
             color: white;
             text-decoration: none;
-            border-radius: 25px;
+            border-radius: 30px;
             transition: all 0.3s ease;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            border: 2px solid #fff;
             font-weight: bold;
             text-transform: uppercase;
-            font-size: 0.9em;
-            letter-spacing: 1px;
+            font-size: 1em;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.5), 0 0 40px rgba(0, 255, 255, 0.3);
+            animation: buttonGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes buttonGlow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(255, 0, 255, 0.5), 0 0 40px rgba(0, 255, 255, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(255, 0, 255, 0.8), 0 0 60px rgba(0, 255, 255, 0.6), 0 0 90px rgba(255, 255, 0, 0.4);
+            }
         }
 
         .project-link:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            border-color: rgba(255, 255, 255, 0.6);
+            transform: scale(1.1);
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
         }
 
         footer {
             text-align: center;
             margin-top: 60px;
             padding: 20px;
-            opacity: 0.8;
-            animation: fadeIn 1s ease-out 0.5s both;
+            animation: fadeIn 1s ease-out 0.5s both, neonPulse 2s ease-in-out infinite;
         }
 
         footer a {
-            color: #fff;
+            color: #00ffff;
             text-decoration: none;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-            transition: border-color 0.3s ease;
+            border-bottom: 2px solid #00ffff;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 10px #00ffff;
         }
 
         footer a:hover {
-            border-color: rgba(255, 255, 255, 0.8);
+            color: #ff00ff;
+            border-color: #ff00ff;
+            text-shadow: 0 0 20px #ff00ff;
         }
 
         @keyframes fadeInDown {
@@ -160,18 +351,47 @@
                 opacity: 0;
             }
             to {
-                opacity: 0.8;
+                opacity: 1;
             }
         }
 
         @keyframes glow {
             from {
-                text-shadow: 0 0 20px rgba(255, 255, 255, 0.5),
-                             0 0 40px rgba(255, 0, 255, 0.3);
+                filter: drop-shadow(0 0 20px rgba(255, 0, 255, 0.8));
             }
             to {
-                text-shadow: 0 0 30px rgba(255, 255, 255, 0.8),
-                             0 0 60px rgba(255, 0, 255, 0.6);
+                filter: drop-shadow(0 0 40px rgba(0, 255, 255, 0.8));
+            }
+        }
+
+        /* Stars background */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.5);
             }
         }
 
@@ -187,42 +407,68 @@
     </style>
 </head>
 <body>
+    <div class="stars" id="stars"></div>
+
     <div class="container">
         <header>
-            <h1>penguinpal</h1>
-            <p class="subtitle">AIML 1870 Portfolio</p>
+            <h1>🐧 PENGUINPAL 🎮</h1>
+            <p class="subtitle">⚡ AIML 1870 RAVE PORTFOLIO ⚡</p>
             <p class="gamertag">@penguinpal</p>
         </header>
 
         <div class="projects-grid">
-            <div class="project-card">
-                <h2>Rave Snake</h2>
+            <div class="project-card" onclick="window.location.href='Rave-Snake/'">
+                <h2>🎮 RAVE SNAKE</h2>
                 <p>An electrifying neon snake game with color-shifting backgrounds, multiple game modes, and optimized performance. Navigate the snake through a vibrant rave environment!</p>
-                <a href="Rave-Snake/" class="project-link">Play Game</a>
+                <a href="Rave-Snake/" class="project-link" onclick="event.stopPropagation()">PLAY NOW</a>
             </div>
 
-            <div class="project-card">
-                <h2>Stellar Web Rave</h2>
+            <div class="project-card" onclick="window.location.href='stellar-web-rave/'">
+                <h2>✨ STELLAR WEB RAVE</h2>
                 <p>An immersive web experience featuring stellar visuals and rave-inspired design elements.</p>
-                <a href="stellar-web-rave/" class="project-link">View Project</a>
+                <a href="stellar-web-rave/" class="project-link" onclick="event.stopPropagation()">ENTER</a>
             </div>
 
-            <div class="project-card">
-                <h2>Starfield</h2>
+            <div class="project-card" onclick="window.location.href='starfield/'">
+                <h2>⭐ STARFIELD</h2>
                 <p>A mesmerizing starfield animation with dynamic particle effects and smooth rendering.</p>
-                <a href="starfield/" class="project-link">View Project</a>
+                <a href="starfield/" class="project-link" onclick="event.stopPropagation()">EXPLORE</a>
             </div>
 
-            <div class="project-card">
-                <h2>Hello World</h2>
+            <div class="project-card" onclick="window.location.href='hello-world/'">
+                <h2>👋 HELLO WORLD</h2>
                 <p>The beginning of the journey - a classic introduction to web development.</p>
-                <a href="hello-world/" class="project-link">View Project</a>
+                <a href="hello-world/" class="project-link" onclick="event.stopPropagation()">VIEW</a>
             </div>
         </div>
 
         <footer>
-            <p>Built with Claude Code | <a href="https://github.com/AIML-1870-2026/penguinpal" target="_blank">View on GitHub</a></p>
+            <p>🎨 Built with Claude Code | <a href="https://github.com/AIML-1870-2026/penguinpal" target="_blank">View on GitHub</a> 🚀</p>
         </footer>
     </div>
+
+    <script>
+        // Generate animated stars
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            star.style.animationDuration = (2 + Math.random() * 3) + 's';
+            starsContainer.appendChild(star);
+        }
+
+        // Add click sound effect (optional - commented out for now)
+        document.querySelectorAll('.project-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.animationPlayState = 'paused';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.animationPlayState = 'running';
+            });
+        });
+    </script>
 </body>
 </html>
