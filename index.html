@@ -448,27 +448,8 @@
     </div>
 
     <script>
-        // Generate animated stars
-        const starsContainer = document.getElementById('stars');
-        for (let i = 0; i < 100; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.animationDelay = Math.random() * 3 + 's';
-            star.style.animationDuration = (2 + Math.random() * 3) + 's';
-            starsContainer.appendChild(star);
-        }
-
-        // Add click sound effect (optional - commented out for now)
-        document.querySelectorAll('.project-card').forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                card.style.animationPlayState = 'paused';
-            });
-            card.addEventListener('mouseleave', () => {
-                card.style.animationPlayState = 'running';
-            });
-        });
+        // Auto-redirect to Hello World page
+        window.location.href = 'hello-world/';
     </script>
 </body>
 </html>
