@@ -3,13 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting to Hello World...</title>
-    <script>
-        // Auto-redirect to external Hello World page
-        window.location.href = 'https://aiml-1870-2026.github.io/penguinpal/hello-world/';
-    </script>
+    <title>Hello World</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @keyframes rave-harnoor {
+            0% { background: linear-gradient(135deg, rgba(255, 0, 255, 0.8) 0%, rgba(0, 255, 255, 0.8) 100%), url('https://www.unomaha.edu/scott-scholars/staff-and-students/img/harnoor-singh.jpg'); }
+            14% { background: linear-gradient(135deg, rgba(255, 0, 0, 0.8) 0%, rgba(255, 255, 0, 0.8) 100%), url('https://www.unomaha.edu/scott-scholars/staff-and-students/img/harnoor-singh.jpg'); }
+            28% { background: linear-gradient(135deg, rgba(0, 255, 0, 0.8) 0%, rgba(0, 0, 255, 0.8) 100%), url('https://www.unomaha.edu/scott-scholars/staff-and-students/img/harnoor-singh.jpg'); }
+            42% { background: linear-gradient(135deg, rgba(255, 128, 0, 0.8) 0%, rgba(255, 0, 255, 0.8) 100%), url('https://www.unomaha.edu/scott-scholars/staff-and-students/img/harnoor-singh.jpg'); }
+            57% { background: linear-gradient(135deg, rgba(0, 255, 255, 0.8) 0%, rgba(255, 0, 128, 0.8) 100%), url('https://www.unomaha.edu/scott-scholars/staff-and-students/img/harnoor-singh.jpg'); }
+            71% { background: linear-gradient(135deg, rgba(128, 0, 255, 0.8) 0%, rgba(255, 255, 0, 0.8) 100%), url('https://www.unomaha.edu/scott-scholars/staff-and-students/img/harnoor-singh.jpg'); }
+            85% { background: linear-gradient(135deg, rgba(255, 0, 128, 0.8) 0%, rgba(0, 255, 0, 0.8) 100%), url('https://www.unomaha.edu/scott-scholars/staff-and-students/img/harnoor-singh.jpg'); }
+            100% { background: linear-gradient(135deg, rgba(255, 0, 255, 0.8) 0%, rgba(0, 255, 255, 0.8) 100%), url('https://www.unomaha.edu/scott-scholars/staff-and-students/img/harnoor-singh.jpg'); }
+        }
+
+        @keyframes rave-jon {
+            0% { background: linear-gradient(135deg, rgba(255, 0, 255, 0.8) 0%, rgba(0, 255, 255, 0.8) 100%), url('https://www.unomaha.edu/scott-scholars/staff-and-students/img/20250910_jon-smail_01.jpg'); }
+            14% { background: linear-gradient(135deg, rgba(255, 0, 0, 0.8) 0%, rgba(255, 255, 0, 0.8) 100%), url('https://www.unomaha.edu/scott-scholars/staff-and-students/img/20250910_jon-smail_01.jpg'); }
+            28% { background: linear-gradient(135deg, rgba(0, 255, 0, 0.8) 0%, rgba(0, 0, 255, 0.8) 100%), url('https://www.unomaha.edu/scott-scholars/staff-and-students/img/20250910_jon-smail_01.jpg'); }
+            42% { background: linear-gradient(135deg, rgba(255, 128, 0, 0.8) 0%, rgba(255, 0, 255, 0.8) 100%), url('https://www.unomaha.edu/scott-scholars/staff-and-students/img/20250910_jon-smail_01.jpg'); }
+            57% { background: linear-gradient(135deg, rgba(0, 255, 255, 0.8) 0%, rgba(255, 0, 128, 0.8) 100%), url('https://www.unomaha.edu/scott-scholars/staff-and-students/img/20250910_jon-smail_01.jpg'); }
+            71% { background: linear-gradient(135deg, rgba(128, 0, 255, 0.8) 0%, rgba(255, 255, 0, 0.8) 100%), url('https://www.unomaha.edu/scott-scholars/staff-and-students/img/20250910_jon-smail_01.jpg'); }
+            85% { background: linear-gradient(135deg, rgba(255, 0, 128, 0.8) 0%, rgba(0, 255, 0, 0.8) 100%), url('https://www.unomaha.edu/scott-scholars/staff-and-students/img/20250910_jon-smail_01.jpg'); }
+            100% { background: linear-gradient(135deg, rgba(255, 0, 255, 0.8) 0%, rgba(0, 255, 255, 0.8) 100%), url('https://www.unomaha.edu/scott-scholars/staff-and-students/img/20250910_jon-smail_01.jpg'); }
+        }
+
+        .toggle-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .toggle-btn:hover {
+            transform: scale(1.05);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, rgba(191, 0, 255, 0.8) 0%, rgba(255, 20, 147, 0.8) 100%), url('https://www.unomaha.edu/scott-scholars/staff-and-students/img/20250910_jon-smail_01.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: rave-harnoor 5s infinite;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 60px 80px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            color: #ff69b4;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .quote {
+            font-size: 1.3rem;
+            color: #ff1493;
+            font-style: italic;
+            margin-top: 30px;
+            padding: 20px;
+            border-left: 4px solid #ffd700;
+            background: linear-gradient(to right, #fff9c4, transparent);
+            border-radius: 5px;
+        }
+
+        .author {
+            font-size: 1rem;
+            color: #666;
+            margin-top: 10px;
+            font-style: normal;
+            font-weight: bold;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #555;
+            line-height: 1.6;
+        }
+    </style>
 </head>
 <body>
-    <p>Redirecting to Hello World...</p>
+    <button class="toggle-btn" onclick="togglePerson()">Switch to Jon</button>
+
+    <div class="container">
+        <h1>Hello World!</h1>
+        <p>By Rachael Jaixen</p>
+        <p>Welcome to your first styled HTML page</p>
+
+        <div class="quote">
+            "The greatest thing you can have in life is your health. The greatest thing you can acquire in life is education. The greatest thing you can do in life is to be a giver because the world already has plenty of takers."
+            <div class="author">— Walter Scott Jr.</div>
+        </div>
+    </div>
+
+    <script>
+        let showingHarnoor = true;
+
+        function togglePerson() {
+            const btn = document.querySelector('.toggle-btn');
+            if (showingHarnoor) {
+                document.body.style.animation = 'rave-jon 5s infinite';
+                btn.textContent = 'Switch to Harnoor';
+            } else {
+                document.body.style.animation = 'rave-harnoor 5s infinite';
+                btn.textContent = 'Switch to Jon';
+            }
+            showingHarnoor = !showingHarnoor;
+        }
+    </script>
 </body>
 </html>
