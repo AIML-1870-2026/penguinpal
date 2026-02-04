@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boids Mini-Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <h1 class="title">Boids Mini-Lab</h1>
+            <p class="subtitle">Emergent behavior in motion</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Canvas Area -->
+            <div class="canvas-container">
+                <canvas id="boids-canvas"></canvas>
+            </div>
+
+            <!-- Control Panel -->
+            <aside class="control-panel">
+                <!-- Presets Section -->
+                <section class="panel-section">
+                    <h2 class="section-title">Presets</h2>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" data-preset="schooling">Schooling</button>
+                        <button class="preset-btn" data-preset="chaotic">Chaotic Swarm</button>
+                        <button class="preset-btn" data-preset="cluster">Tight Cluster</button>
+                    </div>
+                </section>
+
+                <!-- Parameters Section -->
+                <section class="panel-section">
+                    <h2 class="section-title">Parameters</h2>
+
+                    <div class="control-group">
+                        <label for="separation">Separation Weight</label>
+                        <div class="slider-container">
+                            <input type="range" id="separation" min="0" max="5" step="0.1" value="1.5">
+                            <span class="slider-value" id="separation-value">1.5</span>
+                        </div>
+                        <span class="tooltip">How strongly boids avoid crowding nearby neighbors.</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="alignment">Alignment Weight</label>
+                        <div class="slider-container">
+                            <input type="range" id="alignment" min="0" max="5" step="0.1" value="1.0">
+                            <span class="slider-value" id="alignment-value">1.0</span>
+                        </div>
+                        <span class="tooltip">How much boids try to match the direction of nearby boids.</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="cohesion">Cohesion Weight</label>
+                        <div class="slider-container">
+                            <input type="range" id="cohesion" min="0" max="5" step="0.1" value="1.0">
+                            <span class="slider-value" id="cohesion-value">1.0</span>
+                        </div>
+                        <span class="tooltip">How strongly boids move toward the center of nearby neighbors.</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="neighbor-radius">Neighbor Radius</label>
+                        <div class="slider-container">
+                            <input type="range" id="neighbor-radius" min="20" max="200" step="5" value="75">
+                            <span class="slider-value" id="neighbor-radius-value">75</span>
+                        </div>
+                        <span class="tooltip">How far a boid can 'see' other boids.</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="max-speed">Max Speed</label>
+                        <div class="slider-container">
+                            <input type="range" id="max-speed" min="1" max="10" step="0.5" value="4">
+                            <span class="slider-value" id="max-speed-value">4</span>
+                        </div>
+                        <span class="tooltip">Maximum movement speed of each boid.</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="boid-count">Boid Count</label>
+                        <div class="slider-container">
+                            <input type="range" id="boid-count" min="50" max="500" step="10" value="150">
+                            <span class="slider-value" id="boid-count-value">150</span>
+                        </div>
+                        <span class="tooltip">Number of boids in the simulation.</span>
+                    </div>
+                </section>
+
+                <!-- Boundary Mode Section -->
+                <section class="panel-section">
+                    <h2 class="section-title">Boundary Mode</h2>
+                    <div class="toggle-container">
+                        <span class="toggle-label">Wrap</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="boundary-mode">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="toggle-label">Bounce</span>
+                    </div>
+                </section>
+
+                <!-- Interaction Features -->
+                <section class="panel-section">
+                    <h2 class="section-title">Interactions</h2>
+                    <div class="feature-toggles">
+                        <label class="feature-toggle">
+                            <input type="checkbox" id="predator-toggle">
+                            <span class="feature-label">Predator Mode</span>
+                        </label>
+                        <label class="feature-toggle">
+                            <input type="checkbox" id="obstacles-toggle">
+                            <span class="feature-label">Obstacles</span>
+                        </label>
+                    </div>
+                    <span class="tooltip">Click canvas to attract, right-click to repel. Drag to move predator.</span>
+                </section>
+
+                <!-- Simulation Controls -->
+                <section class="panel-section">
+                    <h2 class="section-title">Simulation</h2>
+                    <div class="sim-buttons">
+                        <button class="sim-btn" id="pause-btn">Pause</button>
+                        <button class="sim-btn" id="reset-btn">Reset</button>
+                    </div>
+                </section>
+
+                <!-- Live Metrics -->
+                <section class="panel-section metrics-section">
+                    <h2 class="section-title">Live Metrics</h2>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="metric-label">FPS</span>
+                            <span class="metric-value" id="fps-value">60</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Boids</span>
+                            <span class="metric-value" id="boid-count-metric">150</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Avg Speed</span>
+                            <span class="metric-value" id="avg-speed-value">0.0</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Avg Neighbors</span>
+                            <span class="metric-value" id="avg-neighbors-value">0.0</span>
+                        </div>
+                    </div>
+                </section>
+            </aside>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
