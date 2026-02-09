@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turing Patterns: Neon Rave Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>TURING PATTERNS: NEON RAVE EDITION</h1>
+        <div class="header-buttons">
+            <button id="aboutBtn" class="neon-btn">ABOUT</button>
+            <button id="saveBtn" class="neon-btn">SAVE FRAME</button>
+        </div>
+    </header>
+
+    <main>
+        <aside class="controls-panel">
+            <section class="control-group">
+                <h2>COLOR SCHEMES</h2>
+                <div class="color-swatches" id="colorSwatches"></div>
+            </section>
+
+            <section class="control-group">
+                <h2>PATTERN PRESETS</h2>
+                <div class="preset-buttons" id="presetButtons"></div>
+            </section>
+
+            <section class="control-group">
+                <h2>PARAMETERS</h2>
+                <div class="slider-container">
+                    <label>
+                        <span>FEED RATE (F)</span>
+                        <span class="value" id="feedValue">0.055</span>
+                    </label>
+                    <input type="range" id="feedSlider" min="0.01" max="0.08" step="0.001" value="0.055">
+                </div>
+                <div class="slider-container">
+                    <label>
+                        <span>KILL RATE (K)</span>
+                        <span class="value" id="killValue">0.062</span>
+                    </label>
+                    <input type="range" id="killSlider" min="0.04" max="0.07" step="0.001" value="0.062">
+                </div>
+                <div class="slider-container">
+                    <label>
+                        <span>SPEED</span>
+                        <span class="value" id="speedValue">1.0x</span>
+                    </label>
+                    <input type="range" id="speedSlider" min="0.5" max="3" step="0.5" value="1">
+                </div>
+            </section>
+
+            <section class="control-group">
+                <h2>BRUSH TOOLS</h2>
+                <div class="brush-sizes" id="brushSizes">
+                    <button class="size-btn" data-size="5">S</button>
+                    <button class="size-btn active" data-size="15">M</button>
+                    <button class="size-btn" data-size="30">L</button>
+                    <button class="size-btn" data-size="60">XL</button>
+                </div>
+                <div class="chemical-toggle">
+                    <button class="chem-btn active" data-chem="A">CHEM A</button>
+                    <button class="chem-btn" data-chem="B">CHEM B</button>
+                </div>
+            </section>
+
+            <section class="control-group">
+                <h2>PARAMETER SPACE</h2>
+                <canvas id="parameterMap" width="280" height="180"></canvas>
+                <div class="map-coords" id="mapCoords">F: 0.055 | K: 0.062</div>
+            </section>
+
+            <section class="control-group audio-section">
+                <h2>AUDIO REACTIVE</h2>
+                <div class="audio-controls">
+                    <button id="micBtn" class="audio-btn">
+                        <span class="mic-icon">🎤</span> MIC INPUT
+                    </button>
+                    <button id="musicBtn" class="audio-btn">
+                        <span class="music-icon">🎵</span> SYNTH
+                    </button>
+                </div>
+                <div class="audio-visualizer" id="audioVisualizer">
+                    <canvas id="audioCanvas" width="280" height="40"></canvas>
+                </div>
+                <div class="audio-status" id="audioStatus">Click to enable audio</div>
+            </section>
+        </aside>
+
+        <div class="canvas-container">
+            <canvas id="simulationCanvas" width="512" height="512"></canvas>
+            <div class="canvas-controls">
+                <button id="playPauseBtn" class="control-btn playing">
+                    <span class="play-icon">&#9654;</span>
+                    <span class="pause-icon">&#9208;</span>
+                </button>
+                <button id="resetBtn" class="control-btn">RESET</button>
+                <button id="randomizeBtn" class="control-btn">RANDOMIZE</button>
+            </div>
+            <div class="pattern-info" id="patternInfo">
+                <span class="pattern-name">Coral Growth</span>
+            </div>
+        </div>
+    </main>
+
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>ABOUT TURING PATTERNS</h2>
+            <p>What you're seeing is chemistry painting itself.</p>
+            <p>These patterns are nature's visualizer - the same mathematics that create animal markings, coral formations, and chemical oscillations.</p>
+            <p>Discovered by Alan Turing in 1952, these reaction-diffusion patterns emerge from the interplay of two chemicals that activate and inhibit each other while diffusing at different rates.</p>
+            <p class="rave-text">Now, turn up the bass and watch the universe dance.</p>
+        </div>
+    </div>
+
+    <script src="simulation.js"></script>
+</body>
+</html>
