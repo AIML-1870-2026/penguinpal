@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon Rave Fractals — Julia Set Explorer</title>
+  <meta name="description" content="A psychedelic, neon-drenched Julia Set fractal explorer. Interactive, animated, and immersive.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Seizure Warning Modal -->
+  <div class="seizure-warning" id="seizure-warning">
+    <div class="seizure-content">
+      <h2>Photosensitivity Warning</h2>
+      <p>This app contains <strong>flashing lights, rapid color changes, and pulsing animations</strong> that may trigger seizures in people with photosensitive epilepsy.</p>
+      <p>Choose how you'd like to proceed:</p>
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        <button class="neon-btn" id="warning-accept">Enter Rave Mode</button>
+        <button class="neon-btn blue" id="warning-safe">Safe Mode</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Splash Screen -->
+  <div class="splash-screen hidden" id="splash-screen">
+    <div class="splash-title">Neon Rave Fractals</div>
+    <div class="splash-subtitle">Entering the Fractal Dimension</div>
+    <div class="splash-skip">Click anywhere to skip</div>
+  </div>
+
+  <!-- Screenshot Flash -->
+  <div class="screenshot-flash" id="screenshot-flash"></div>
+
+  <!-- App Container -->
+  <div class="app-container">
+
+    <!-- Header -->
+    <header class="app-header">
+      <div class="app-title">Neon Rave Fractals</div>
+      <div class="header-controls">
+        <button class="neon-btn blue" id="btn-pulse">Pulse Colors</button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- Canvas Area -->
+      <div class="canvas-container">
+        <canvas id="fractal-canvas"></canvas>
+        <div class="canvas-overlay" id="canvas-overlay"></div>
+
+        <!-- Tutorial -->
+        <div class="tutorial-overlay hidden" id="tutorial">
+          Click to drag &bull; Scroll to zoom &bull; Double-click to reset &bull; Try the presets &rarr;
+        </div>
+      </div>
+
+      <!-- Control Panel -->
+      <aside class="control-panel" role="complementary" aria-label="Fractal controls">
+
+        <!-- Palettes -->
+        <div class="panel-section">
+          <div class="section-title">Color Palette</div>
+          <div class="palette-grid" id="palette-grid"></div>
+        </div>
+
+        <!-- Presets -->
+        <div class="panel-section">
+          <div class="section-title">Presets</div>
+          <div class="preset-grid" id="preset-grid"></div>
+        </div>
+
+        <!-- Parameters -->
+        <div class="panel-section">
+          <div class="section-title">Parameters</div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <span class="slider-label">c Real</span>
+              <span class="slider-value" id="value-c-real">-0.7500</span>
+            </div>
+            <input type="range" id="slider-c-real" min="-2" max="2" step="0.001" value="-0.75" aria-label="c real part">
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <span class="slider-label">c Imaginary</span>
+              <span class="slider-value" id="value-c-imag">0.1100</span>
+            </div>
+            <input type="range" id="slider-c-imag" min="-2" max="2" step="0.001" value="0.11" aria-label="c imaginary part">
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-header">
+              <span class="slider-label">Iterations</span>
+              <span class="slider-value" id="value-iter">250</span>
+            </div>
+            <input type="range" id="slider-iter" min="50" max="500" step="10" value="250" aria-label="Maximum iterations">
+          </div>
+        </div>
+
+        <!-- Zoom -->
+        <div class="panel-section">
+          <div class="section-title">Zoom</div>
+          <div class="zoom-controls">
+            <button class="zoom-btn" id="zoom-out" aria-label="Zoom out">&minus;</button>
+            <span class="zoom-display" id="zoom-display">1.50x</span>
+            <button class="zoom-btn" id="zoom-in" aria-label="Zoom in">+</button>
+            <button class="zoom-btn" id="zoom-reset" aria-label="Reset zoom" style="font-size:0.7rem">&#x21ba;</button>
+          </div>
+        </div>
+
+        <!-- Effects -->
+        <div class="panel-section">
+          <div class="section-title">Effects</div>
+          <div class="effect-grid">
+            <button class="effect-btn" data-effect="bloom">Bloom</button>
+            <button class="effect-btn" data-effect="scanlines">Scanlines</button>
+            <button class="effect-btn" data-effect="chromatic">Chromatic</button>
+            <button class="effect-btn" data-effect="invert">Invert</button>
+            <button class="effect-btn active" data-effect="vignette">Vignette</button>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="panel-section">
+          <div class="section-title">Actions</div>
+          <div class="action-grid">
+            <button class="neon-btn green" id="btn-random">&#x1F3B2; Random</button>
+            <button class="neon-btn blue" id="btn-morph">&#x25B6;&#xFE0F; Auto-Morph</button>
+            <button class="neon-btn purple" id="btn-capture">&#x1F4F8; Capture</button>
+          </div>
+        </div>
+
+        <!-- Keyboard shortcuts reference -->
+        <div class="panel-section" style="opacity:0.5">
+          <div class="section-title">Shortcuts</div>
+          <div style="font-size:0.6rem; line-height:1.8; color:var(--text-secondary)">
+            <strong>Space</strong> Auto-morph &bull;
+            <strong>R</strong> Random &bull;
+            <strong>P</strong> Cycle palette &bull;
+            <strong>S</strong> Screenshot &bull;
+            <strong>1-8</strong> Presets &bull;
+            <strong>+/&minus;</strong> Zoom &bull;
+            <strong>Arrows</strong> Pan
+          </div>
+        </div>
+
+      </aside>
+    </main>
+
+    <!-- Info Bar -->
+    <footer class="info-bar">
+      <div class="info-item">
+        <span class="info-label">c =</span>
+        <span class="info-value" id="info-c">-0.7500 + 0.1100i</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Zoom:</span>
+        <span class="info-value" id="info-zoom">1.50x</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Iter:</span>
+        <span class="info-value" id="info-iter">250</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">FPS:</span>
+        <span class="info-value" id="info-fps">—</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Cursor:</span>
+        <span class="info-value" id="info-cursor">—</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
