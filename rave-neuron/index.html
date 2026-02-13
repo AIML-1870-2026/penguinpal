@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doomscroll or Nah?</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+
+  <header>
+    <h1 class="glow-text">DOOMSCROLL OR NAH?</h1>
+    <p class="subtitle">A 3-Class Neural Decision Maker</p>
+  </header>
+
+  <main>
+    <!-- Left: Input Sliders -->
+    <section class="panel sliders-panel" aria-label="Neuron Inputs">
+      <h2>Inputs</h2>
+
+      <div class="slider-group" id="time-group">
+        <label for="slider-time">
+          <span class="slider-icon">&#x1F550;</span> Current Time
+          <span class="slider-value" id="val-time">12:00 AM</span>
+        </label>
+        <input type="range" id="slider-time" min="0" max="24" step="0.1" value="0" aria-label="Current Time" />
+        <div class="weight-display" id="weight-time">w = -0.60</div>
+        <div class="time-message" id="time-message">Still early enough to get good sleep!</div>
+      </div>
+
+      <div class="slider-group">
+        <label for="slider-spiciness">
+          <span class="slider-icon">&#x1F525;</span> Content Spiciness
+          <span class="slider-value" id="val-spiciness">0.50</span>
+        </label>
+        <input type="range" id="slider-spiciness" min="0" max="1" step="0.01" value="0.5" aria-label="Content Spiciness" />
+        <div class="weight-display">w = +1.20</div>
+      </div>
+
+      <div class="slider-group">
+        <label for="slider-responsibility">
+          <span class="slider-icon">&#x1F4C5;</span> Tomorrow's Importance
+          <span class="slider-value" id="val-responsibility">0.50</span>
+        </label>
+        <input type="range" id="slider-responsibility" min="0" max="1" step="0.01" value="0.5" aria-label="Tomorrow's Importance" />
+        <div class="weight-display">w = -1.00</div>
+      </div>
+
+      <div class="slider-group">
+        <label for="slider-energy">
+          <span class="slider-icon">&#x26A1;</span> Energy Level
+          <span class="slider-value" id="val-energy">0.50</span>
+        </label>
+        <input type="range" id="slider-energy" min="0" max="1" step="0.01" value="0.5" aria-label="Energy Level" />
+        <div class="weight-display">w = +0.70</div>
+      </div>
+
+      <div class="slider-group">
+        <label for="slider-fomo">
+          <span class="slider-icon">&#x1F440;</span> FOMO Level
+          <span class="slider-value" id="val-fomo">0.50</span>
+        </label>
+        <input type="range" id="slider-fomo" min="0" max="1" step="0.01" value="0.5" aria-label="FOMO Level" />
+        <div class="weight-display">w = +0.90</div>
+      </div>
+
+      <div class="slider-group bias-group">
+        <label for="slider-bias">
+          <span class="slider-icon">&#x1F3AA;</span> Gremlin Mode Baseline
+          <span class="slider-value" id="val-bias">+0.30</span>
+        </label>
+        <input type="range" id="slider-bias" min="-2" max="2" step="0.01" value="0.3" aria-label="Bias" />
+      </div>
+    </section>
+
+    <!-- Center: Neuron Visualization & Output -->
+    <section class="panel center-panel" aria-label="Neuron Output">
+      <div class="neuron-container">
+        <canvas id="neuron-canvas" width="300" height="300" aria-label="Neuron visualization"></canvas>
+      </div>
+
+      <div class="decision-output" id="decision-output">
+        <div class="decision-text" id="decision-text">KEEP SCROLLING!</div>
+        <div class="decision-emoji" id="decision-emoji">&#x1F4F1;&#x2728;</div>
+      </div>
+
+      <div class="prob-bars">
+        <div class="prob-row">
+          <span class="prob-label sleep-color">Sleep</span>
+          <div class="prob-bar-container"><div class="prob-bar prob-bar-sleep" id="prob-bar-sleep"></div></div>
+          <span class="prob-pct" id="pct-sleep">33%</span>
+        </div>
+        <div class="prob-row">
+          <span class="prob-label scroll-color">Scroll</span>
+          <div class="prob-bar-container"><div class="prob-bar prob-bar-scroll" id="prob-bar-scroll"></div></div>
+          <span class="prob-pct" id="pct-scroll">33%</span>
+        </div>
+        <div class="prob-row">
+          <span class="prob-label work-color">Work</span>
+          <div class="prob-bar-container"><div class="prob-bar prob-bar-work" id="prob-bar-work"></div></div>
+          <span class="prob-pct" id="pct-work">33%</span>
+        </div>
+      </div>
+
+      <div class="math-display" id="math-display">
+        <pre id="math-text"></pre>
+      </div>
+    </section>
+
+    <!-- Right: Decision Boundary Plot -->
+    <section class="panel plot-panel" aria-label="Decision Boundary">
+      <h2>Decision Boundary</h2>
+      <p class="plot-axes-label">X: Time &nbsp; Y: Spiciness</p>
+      <canvas id="plot-canvas" width="400" height="400" aria-label="Decision boundary plot"></canvas>
+      <div class="plot-instructions">Click on the plot to add training points</div>
+      <div class="label-buttons">
+        <button id="btn-label-scroll" class="btn btn-scroll" aria-label="Label as scrolled">&#x1F4F1; I Scrolled</button>
+        <button id="btn-label-sleep" class="btn btn-sleep" aria-label="Label as slept">&#x1F634; I Slept</button>
+        <button id="btn-label-work" class="btn btn-work" aria-label="Label as did schoolwork">&#x1F4DA; I Studied</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bottom: Training Controls -->
+  <section class="panel training-panel" aria-label="Training Controls">
+    <div class="training-controls">
+      <button id="btn-step" class="btn btn-neon">&#x26A1; Step</button>
+      <button id="btn-train" class="btn btn-neon">&#x1F389; Train</button>
+      <button id="btn-reset" class="btn btn-neon">&#x1F504; Reset</button>
+
+      <div class="speed-control">
+        <label for="slider-speed">&#x1F3B5; BPM</label>
+        <input type="range" id="slider-speed" min="1" max="20" value="5" aria-label="Training speed" />
+      </div>
+    </div>
+
+    <div class="training-stats">
+      <div class="stat">
+        <span class="stat-label">Training Steps:</span>
+        <span class="stat-value" id="stat-steps">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Accuracy:</span>
+        <span class="stat-value" id="stat-accuracy">--</span>
+      </div>
+    </div>
+
+    <div class="weights-display" id="weights-display"></div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
