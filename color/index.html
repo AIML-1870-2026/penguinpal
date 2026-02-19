@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon Rave RGB Color Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Ambient floating orbs -->
+  <div class="bg-ambient">
+    <div class="bg-orb"></div>
+    <div class="bg-orb"></div>
+    <div class="bg-orb"></div>
+    <div class="bg-orb"></div>
+  </div>
+
+  <!-- Mouse trail canvas -->
+  <canvas id="trailCanvas"></canvas>
+
+  <!-- Particle burst canvas -->
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <div class="app-wrapper">
+
+    <!-- Header -->
+    <header class="header">
+      <h1>Neon Rave Color Studio</h1>
+      <p>Generate &bull; Explore &bull; Paint &bull; Verify</p>
+    </header>
+
+    <!-- ══════════════════════════════════════════
+         STUDIO: Color Generator (main) + Paint (companion)
+         ══════════════════════════════════════════ -->
+    <div class="studio-layout">
+
+      <!-- ── Main Column: Color Generator ── -->
+      <div class="studio-main">
+
+        <!-- Live Color + Controls Row -->
+        <div class="hero-color-row">
+          <div class="live-color-preview card">
+            <div class="live-swatch" id="live-swatch"></div>
+            <div class="live-color-info">
+              <span class="color-value-badge" id="val-hex" title="Click to copy">#FF00FF</span>
+              <span class="color-value-badge" id="val-rgb" title="Click to copy">rgb(255, 0, 255)</span>
+              <span class="color-value-badge" id="val-hsl" title="Click to copy">hsl(300, 100%, 50%)</span>
+            </div>
+            <button class="btn btn-sm" id="btn-random">Random</button>
+          </div>
+        </div>
+
+        <!-- Color Explorer: Wheel + Blend + Sliders -->
+        <div class="explorer-grid">
+          <div class="explorer-left">
+            <div class="card wheel-card">
+              <h2>Color Wheel</h2>
+              <div class="wheel-wrapper">
+                <canvas id="colorWheel" width="280" height="280"></canvas>
+                <div class="wheel-cursor" id="wheelCursor"></div>
+              </div>
+              <div class="lightness-slider">
+                <label>Lightness <span id="lightness-val">50</span>%</label>
+                <input type="range" id="slider-lightness" min="5" max="95" value="50" class="slider-lightness-track">
+              </div>
+            </div>
+            <div class="card sliders-panel">
+              <h2>RGB Channels</h2>
+              <div class="slider-group red">
+                <label>Red <span class="slider-val" id="val-r">255</span></label>
+                <input type="range" id="slider-r" min="0" max="255" value="255">
+              </div>
+              <div class="slider-group green">
+                <label>Green <span class="slider-val" id="val-g">0</span></label>
+                <input type="range" id="slider-g" min="0" max="255" value="0">
+              </div>
+              <div class="slider-group blue">
+                <label>Blue <span class="slider-val" id="val-b">255</span></label>
+                <input type="range" id="slider-b" min="0" max="255" value="255">
+              </div>
+              <div style="margin-top: 8px;">
+                <h2>Hex Input</h2>
+                <div class="input-group">
+                  <label>HEX</label>
+                  <input type="text" id="hex-input" value="#FF00FF" maxlength="7">
+                </div>
+              </div>
+              <div class="channel-bars">
+                <div class="channel-bar"><div class="channel-bar-fill red-fill" id="bar-r" style="width:100%"></div></div>
+                <div class="channel-bar"><div class="channel-bar-fill green-fill" id="bar-g" style="width:0%"></div></div>
+                <div class="channel-bar"><div class="channel-bar-fill blue-fill" id="bar-b" style="width:100%"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="explorer-center">
+            <div class="blend-container">
+              <canvas id="blendCanvas" width="420" height="420"></canvas>
+              <div class="blend-crosshair" id="blendCrosshair"></div>
+              <div class="blend-sampled-hex" id="blend-sampled-hex">#FF00FF</div>
+            </div>
+            <div class="blend-controls">
+              <button class="btn btn-sm btn-blue" id="btn-add-blob">+ Add Blob</button>
+              <button class="btn btn-sm" id="btn-reset-blobs">Reset</button>
+              <span class="blend-hint">Drag blobs to mix &bull; Scroll to resize &bull; Click background to sample</span>
+            </div>
+            <div class="color-history">
+              <div class="history-label">History</div>
+              <div class="history-strip" id="history-strip"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Palette Generator -->
+        <div class="card palette-card-wrapper">
+          <h2>Palette Generator</h2>
+          <div class="palette-controls">
+            <select id="harmony-select">
+              <option value="complementary">Complementary</option>
+              <option value="analogous">Analogous</option>
+              <option value="triadic">Triadic</option>
+              <option value="tetradic">Tetradic</option>
+              <option value="split-complementary">Split-Complementary</option>
+              <option value="monochromatic">Monochromatic</option>
+              <option value="neon-rave" selected>Neon Rave Special</option>
+            </select>
+            <button class="btn btn-pink" id="btn-generate">Generate</button>
+            <label class="rave-toggle">
+              <input type="checkbox" id="rave-mode" checked>
+              Rave Mode
+            </label>
+          </div>
+          <div class="palette-grid" id="palette-grid"></div>
+          <div class="contrast-matrix-section" id="contrast-matrix-section">
+            <h2>Contrast Matrix</h2>
+            <p class="contrast-matrix-desc">WCAG contrast ratios between each pair of palette colors. Green = AA pass, yellow = large text only, red = fail.</p>
+            <div class="contrast-matrix" id="contrast-matrix"></div>
+          </div>
+          <div class="btn-row" style="margin-top: 20px;">
+            <button class="btn btn-blue btn-sm" id="btn-export-css">Export CSS</button>
+            <button class="btn btn-blue btn-sm" id="btn-export-json">Export JSON</button>
+          </div>
+          <div class="export-panel" id="export-panel" style="display:none;">
+            <h3>Exported Palette</h3>
+            <pre class="export-code" id="export-output"></pre>
+          </div>
+        </div>
+
+      </div><!-- /.studio-main -->
+
+      <!-- ── Companion: Paint Canvas ── -->
+      <div class="studio-paint">
+        <div class="paint-companion card">
+          <div class="paint-companion-header">
+            <h2>Test Your Colors</h2>
+            <span class="paint-hint">Paint with your palette</span>
+          </div>
+
+          <!-- Paint Canvas -->
+          <div class="paint-canvas-wrapper">
+            <canvas id="paintCanvas"></canvas>
+            <canvas id="paintGlowCanvas"></canvas>
+            <div class="paint-cursor" id="paintCursor">
+              <div class="cursor-ring cursor-ring-1"></div>
+              <div class="cursor-ring cursor-ring-2"></div>
+              <div class="cursor-dot"></div>
+            </div>
+          </div>
+
+          <!-- Active Color -->
+          <div class="paint-active-row">
+            <div class="paint-active-color" id="paint-active-swatch"></div>
+            <div class="paint-active-hex" id="paint-active-hex">#FF00FF</div>
+          </div>
+
+          <!-- Palette Strip -->
+          <div class="paint-palette-strip" id="paint-palette-strip"></div>
+
+          <!-- Brush Controls -->
+          <div class="paint-controls-grid">
+            <div class="paint-tool-group">
+              <label>Size <span id="brush-size-val">16</span>px</label>
+              <input type="range" id="brush-size" min="2" max="120" value="16" class="paint-slider">
+            </div>
+            <div class="paint-tool-group">
+              <label>Opacity <span id="brush-opacity-val">100</span>%</label>
+              <input type="range" id="brush-opacity" min="5" max="100" value="100" class="paint-slider">
+            </div>
+          </div>
+
+          <!-- Mode + Tools Row -->
+          <div class="paint-modes-row">
+            <div class="paint-brush-modes">
+              <button class="paint-mode-btn" data-mode="normal" title="Normal">Normal</button>
+              <button class="paint-mode-btn active" data-mode="neon" title="Neon Glow">Neon</button>
+              <button class="paint-mode-btn" data-mode="rainbow" title="Rainbow Cycle">Rainbow</button>
+              <button class="paint-mode-btn" data-mode="spray" title="Neon Spray">Spray</button>
+            </div>
+            <div class="paint-tools">
+              <button class="paint-tool-btn active" data-tool="brush" title="Brush">&#9998;</button>
+              <button class="paint-tool-btn" data-tool="eraser" title="Eraser">&#9003;</button>
+              <button class="paint-tool-btn" data-tool="eyedropper" title="Eyedropper">&#128065;</button>
+            </div>
+          </div>
+
+          <!-- Bottom Actions -->
+          <div class="paint-actions">
+            <div class="paint-bg-options">
+              <button class="paint-bg-btn active" data-bg="dark" title="Dark">&#9899;</button>
+              <button class="paint-bg-btn" data-bg="light" title="Light">&#9898;</button>
+              <button class="paint-bg-btn" data-bg="transparent" title="Transparent">&#9634;</button>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-sm btn-pink" id="btn-clear-paint">Clear</button>
+              <button class="btn btn-sm btn-blue" id="btn-save-paint">Save PNG</button>
+            </div>
+          </div>
+        </div>
+      </div><!-- /.studio-paint -->
+
+    </div><!-- /.studio-layout -->
+
+    <!-- ══════════════════════════════════════════
+         Color Blindness Simulator (full width below)
+         ══════════════════════════════════════════ -->
+    <section class="section" id="simulator">
+      <div class="section-title">Blindness Simulator</div>
+      <div class="card">
+        <h2>Color Blindness Simulator</h2>
+        <div class="sim-controls">
+          <button class="sim-btn active" data-type="protanopia">Protanopia</button>
+          <button class="sim-btn" data-type="deuteranopia">Deuteranopia</button>
+          <button class="sim-btn" data-type="tritanopia">Tritanopia</button>
+          <button class="sim-btn" data-type="protanomaly">Protanomaly</button>
+          <button class="sim-btn" data-type="deuteranomaly">Deuteranomaly</button>
+          <button class="sim-btn" data-type="tritanomaly">Tritanomaly</button>
+          <button class="sim-btn" data-type="achromatopsia">Achromatopsia</button>
+          <button class="sim-btn" data-type="achromatomaly">Achromatomaly</button>
+        </div>
+        <div class="sim-comparison">
+          <div class="sim-panel">
+            <h3>Original Palette</h3>
+            <div class="sim-swatches" id="sim-original"></div>
+          </div>
+          <div class="sim-panel">
+            <h3>Simulated View</h3>
+            <div class="sim-swatches" id="sim-simulated"></div>
+          </div>
+        </div>
+        <div class="sim-score">
+          <h3>Distinguishability Score: <span id="sim-score-val">--</span></h3>
+          <div class="score-bar">
+            <div class="score-bar-fill" id="score-fill" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /.app-wrapper -->
+
+  <script src="app.js"></script>
+</body>
+</html>
