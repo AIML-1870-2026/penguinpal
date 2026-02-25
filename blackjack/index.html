@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beach Blackjack 🌴</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Poppins:wght@400;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="blackjack.css">
+</head>
+<body>
+
+  <!-- Background decorations -->
+  <div class="bg-decoration" aria-hidden="true">
+    <div class="sun"></div>
+    <div class="cloud cloud-1">☁️</div>
+    <div class="cloud cloud-2">☁️</div>
+  </div>
+  <div class="waves-container" aria-hidden="true">
+    <div class="wave wave-1"></div>
+    <div class="wave wave-2"></div>
+    <div class="wave wave-3"></div>
+  </div>
+  <div id="confetti-container" aria-hidden="true"></div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-brand">
+      <h1 class="game-title">🌴 Beach Blackjack 🌴</h1>
+    </div>
+    <div class="balance-display" aria-label="Chip balance">
+      <span class="balance-icon">🪙</span>
+      <span class="balance-amount" id="balance">1,000</span>
+    </div>
+    <button class="icon-btn" id="settings-btn" aria-label="Open settings">⚙️</button>
+  </header>
+
+  <!-- Main layout: stats | table | history -->
+  <main class="main-content">
+
+    <!-- Left: Stats panel -->
+    <aside class="side-panel stats-panel" aria-label="Statistics">
+      <h2 class="panel-heading">📊 Stats</h2>
+      <div class="stat-row">
+        <span>Games</span>
+        <span id="s-games" class="stat-num">0</span>
+      </div>
+      <div class="stat-row">
+        <span>Wins</span>
+        <span id="s-wins" class="stat-num green">0</span>
+      </div>
+      <div class="stat-row">
+        <span>Losses</span>
+        <span id="s-losses" class="stat-num red">0</span>
+      </div>
+      <div class="stat-row">
+        <span>Pushes</span>
+        <span id="s-pushes" class="stat-num yellow">0</span>
+      </div>
+      <div class="stat-row">
+        <span>Win Rate</span>
+        <span id="s-winrate" class="stat-num">0%</span>
+      </div>
+      <div class="progress-track" role="progressbar" aria-label="Win rate bar">
+        <div class="progress-fill" id="winrate-fill" style="width:0%"></div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-row">
+        <span>Streak</span>
+        <span id="s-streak" class="stat-num">0</span>
+      </div>
+      <div class="stat-row">
+        <span>Best Win</span>
+        <span id="s-best" class="stat-num green">$0</span>
+      </div>
+      <div class="stat-row">
+        <span>⭐ BJs</span>
+        <span id="s-bj" class="stat-num purple">0</span>
+      </div>
+      <div class="stat-row">
+        <span>P&amp;L</span>
+        <span id="s-pnl" class="stat-num">$0</span>
+      </div>
+    </aside>
+
+    <!-- Center: Game table -->
+    <section class="game-table" aria-label="Blackjack table">
+
+      <!-- Dealer zone -->
+      <div class="player-zone dealer-zone">
+        <div class="zone-label">Dealer 🌊</div>
+        <div class="hand-value-badge" id="dealer-value" aria-label="Dealer hand value">--</div>
+        <div class="cards-area" id="dealer-cards" aria-label="Dealer cards"></div>
+      </div>
+
+      <!-- Betting surface (center of table) -->
+      <div class="table-surface">
+        <div class="bet-info">
+          <span class="bet-label">Bet</span>
+          <span class="bet-amount" id="current-bet" aria-live="polite">0</span>
+        </div>
+        <div class="chip-stack-display" id="chip-stack" aria-hidden="true"></div>
+        <div class="result-banner hidden" id="result-banner" role="status" aria-live="assertive">
+          <span id="result-text"></span>
+        </div>
+      </div>
+
+      <!-- Player zone -->
+      <div class="player-zone player-zone-bottom">
+        <div class="cards-area" id="player-cards" aria-label="Your cards"></div>
+        <div class="hand-value-badge" id="player-value" aria-label="Your hand value">--</div>
+        <div class="zone-label">You 🏄</div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls-area">
+
+        <!-- Betting phase controls -->
+        <div id="betting-controls" class="control-group">
+          <div class="chips-row" role="group" aria-label="Choose chip value">
+            <button class="chip chip-10"  data-amount="10"  title="Add 10">10</button>
+            <button class="chip chip-25"  data-amount="25"  title="Add 25">25</button>
+            <button class="chip chip-50"  data-amount="50"  title="Add 50">50</button>
+            <button class="chip chip-100" data-amount="100" title="Add 100">100</button>
+            <button class="chip chip-250" data-amount="250" title="Add 250">250</button>
+            <button class="chip chip-500" data-amount="500" title="Add 500">500</button>
+          </div>
+          <div class="bet-buttons">
+            <button class="btn btn-outline" id="clear-bet">✕ Clear</button>
+            <button class="btn btn-hot-pink" id="deal-btn">Deal 🎲</button>
+          </div>
+        </div>
+
+        <!-- Playing phase controls -->
+        <div id="playing-controls" class="control-group hidden" role="group" aria-label="Game actions">
+          <button class="btn btn-green"        id="hit-btn">👊 Hit</button>
+          <button class="btn btn-blue"         id="stand-btn">✋ Stand</button>
+          <button class="btn btn-purple hidden" id="double-btn">💎 Double</button>
+        </div>
+
+        <!-- Result / next round -->
+        <div id="result-controls" class="control-group hidden">
+          <button class="btn btn-hot-pink" id="next-round-btn">Next Round 🌊</button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Right: History panel -->
+    <aside class="side-panel history-panel" aria-label="Round history">
+      <h2 class="panel-heading">📋 History</h2>
+      <div class="history-list" id="history-list" aria-live="polite">
+        <p class="history-empty">No rounds played yet!</p>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <button class="btn btn-outline btn-sm" id="new-game-btn">🔄 New Game</button>
+    <button class="btn btn-outline btn-sm" id="rules-btn">📖 Rules</button>
+    <button class="btn btn-outline btn-sm" id="howtoplay-btn">❓ How to Play</button>
+    <span class="footer-credit">Beach Blackjack v1.0 🌴</span>
+  </footer>
+
+  <!-- ===== MODALS ===== -->
+
+  <!-- Rules -->
+  <div class="modal-overlay hidden" id="rules-modal" role="dialog" aria-modal="true" aria-labelledby="rules-title">
+    <div class="modal-box">
+      <h2 id="rules-title">📖 How to Play</h2>
+      <ul class="rules-list">
+        <li>🎯 Get closer to 21 than the dealer without busting</li>
+        <li>🃏 Number cards = face value &nbsp;|&nbsp; J, Q, K = 10</li>
+        <li>🅰️ Ace = 1 or 11 (best value chosen automatically)</li>
+        <li>⭐ Blackjack = Ace + 10-value card — pays 3:2!</li>
+        <li>🌊 Dealer hits until 17 or higher</li>
+        <li>👊 <strong>Hit</strong> — draw another card</li>
+        <li>✋ <strong>Stand</strong> — keep your hand</li>
+        <li>💎 <strong>Double Down</strong> — double your bet, get exactly one more card</li>
+        <li>💰 Win = 1:1 payout &nbsp;|&nbsp; Blackjack = 3:2 payout</li>
+        <li>🏖️ Start with 1,000 chips. Min bet: 10. Max bet: 1,000.</li>
+      </ul>
+      <button class="btn btn-hot-pink" id="rules-close">Let's Play! 🤙</button>
+    </div>
+  </div>
+
+  <!-- Settings -->
+  <div class="modal-overlay hidden" id="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <div class="modal-box">
+      <h2 id="settings-title">⚙️ Settings</h2>
+      <div class="setting-row">
+        <label for="sfx-on">Sound Effects</label>
+        <label class="toggle-switch">
+          <input type="checkbox" id="sfx-on" checked>
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <label for="volume">Volume</label>
+        <input type="range" id="volume" min="0" max="100" value="70" class="range-slider" aria-label="Volume level">
+      </div>
+      <button class="btn btn-hot-pink" id="settings-close">Save ✨</button>
+    </div>
+  </div>
+
+  <!-- Game over -->
+  <div class="modal-overlay hidden" id="gameover-modal" role="dialog" aria-modal="true" aria-labelledby="gameover-title">
+    <div class="modal-box">
+      <div class="gameover-icon" aria-hidden="true">💸</div>
+      <h2 id="gameover-title">Out of Chips!</h2>
+      <p class="modal-sub" id="gameover-summary">Better luck next time!</p>
+      <button class="btn btn-hot-pink" id="gameover-restart">Start Fresh 🌴</button>
+    </div>
+  </div>
+
+  <!-- Welcome / how-to-play splash -->
+  <div class="modal-overlay hidden" id="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+    <div class="modal-box welcome-box">
+      <div class="welcome-hero">🌴🏖️🌴</div>
+      <h2 id="welcome-title">Beach Blackjack</h2>
+      <p class="modal-sub">A preppy beach vibes card game. Beat the dealer without going over 21!</p>
+
+      <div class="how-to-steps">
+        <div class="step">
+          <span class="step-num">1</span>
+          <div>
+            <strong>Place your bet</strong>
+            <p>Click chip buttons to build your bet, then hit <em>Deal</em>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <div>
+            <strong>Play your hand</strong>
+            <p><strong>Hit</strong> to draw a card &nbsp;·&nbsp; <strong>Stand</strong> to hold &nbsp;·&nbsp; <strong>Double</strong> to double your bet &amp; draw one card.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <div>
+            <strong>Beat the dealer</strong>
+            <p>Get closer to <strong>21</strong> than the dealer. Go over and you bust — dealer wins.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">★</span>
+          <div>
+            <strong>Blackjack!</strong>
+            <p>Ace + any 10-value card on your first two cards = Blackjack. Pays <strong>3:2</strong>!</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-values">
+        <span class="cv-item"><span class="cv-badge">2–9</span> face value</span>
+        <span class="cv-item"><span class="cv-badge">10 J Q K</span> = 10</span>
+        <span class="cv-item"><span class="cv-badge">A</span> = 1 or 11</span>
+      </div>
+
+      <p class="welcome-tip">💡 Tip: keyboard shortcuts — <kbd>H</kbd> Hit &nbsp; <kbd>S</kbd> Stand &nbsp; <kbd>D</kbd> Double &nbsp; <kbd>Enter</kbd> Next round</p>
+
+      <button class="btn btn-hot-pink welcome-play-btn" id="welcome-close">Let's Play! 🏄</button>
+      <p class="welcome-rules-link">Returning player? <button class="link-btn" id="welcome-skip">Skip intro</button></p>
+    </div>
+  </div>
+
+  <!-- New game confirm -->
+  <div class="modal-overlay hidden" id="newgame-modal" role="dialog" aria-modal="true" aria-labelledby="newgame-title">
+    <div class="modal-box">
+      <h2 id="newgame-title">🔄 New Game?</h2>
+      <p class="modal-sub">Resets chips to 1,000. Your all-time stats are kept.</p>
+      <div class="modal-actions">
+        <button class="btn btn-outline" id="newgame-cancel">Cancel</button>
+        <button class="btn btn-hot-pink" id="newgame-confirm">Reset! 🌴</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="blackjack.js"></script>
+</body>
+</html>
