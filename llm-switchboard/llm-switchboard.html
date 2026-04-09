@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LLM Switchboard</title>
+  <link rel="stylesheet" href="llm-switchboard.css">
+</head>
+<body id="body">
+
+  <div class="app">
+
+    <!-- ── Header ── -->
+    <header class="app-header">
+      <div class="header-left">
+        <span aria-hidden="true">🎛️</span>
+        <h1 class="neon-text">LLM SWITCHBOARD</h1>
+      </div>
+      <div class="header-right">
+        <label class="dim" for="strobeSelect">Strobe:</label>
+        <select id="strobeSelect" class="neon-select" aria-label="Strobe intensity">
+          <option value="off">Off</option>
+          <option value="low">⚡ Low</option>
+          <option value="medium">⚡⚡ Medium</option>
+          <option value="high">⚡⚡⚡ High</option>
+        </select>
+        <button class="neon-btn btn-magenta btn-sm" id="a11yBtn" aria-label="Toggle accessibility mode — disables all animations">
+          ♿ A11y
+        </button>
+      </div>
+    </header>
+
+    <!-- ── Provider & Mode Config ── -->
+    <section class="card config-card" aria-label="Provider and mode configuration">
+
+      <div class="config-row">
+        <div class="cfg-group">
+          <span class="dim">Provider:</span>
+          <div class="seg-group" role="group" aria-label="Provider">
+            <button class="seg-btn openai-active active" id="openaiBtn" aria-pressed="true">OpenAI</button>
+            <div class="pill-switch" id="providerSwitch" role="switch" aria-checked="false" tabindex="0" aria-label="Toggle provider">
+              <div class="pill-thumb"></div>
+            </div>
+            <button class="seg-btn" id="anthropicBtn" aria-pressed="false">Anthropic</button>
+          </div>
+        </div>
+
+        <div class="cfg-group">
+          <span class="dim">Mode:</span>
+          <div class="seg-group" role="group" aria-label="Output mode">
+            <button class="seg-btn active" id="textBtn" aria-pressed="true">📝 Text</button>
+            <div class="pill-switch" id="modeSwitch" role="switch" aria-checked="false" tabindex="0" aria-label="Toggle output mode">
+              <div class="pill-thumb"></div>
+            </div>
+            <button class="seg-btn" id="jsonBtn" aria-pressed="false">{ } JSON</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="config-row">
+        <div class="cfg-group">
+          <label class="dim" for="modelSelect">Model:</label>
+          <select id="modelSelect" class="neon-select" aria-label="Model selection"></select>
+        </div>
+
+        <div class="cfg-group" id="apiKeyGroup">
+          <label class="dim" for="apiKeyInput">API Key:</label>
+          <div class="api-key-wrap">
+            <input type="password" id="apiKeyInput" class="neon-input key-input"
+                   placeholder="Enter OpenAI API key…"
+                   aria-label="OpenAI API key" autocomplete="off" spellcheck="false">
+            <span id="keyStatus" aria-live="polite"></span>
+          </div>
+        </div>
+
+        <div class="cfg-group" id="anthKeyGroup" style="display:none">
+          <label class="dim" for="anthKeyInput">API Key:</label>
+          <div class="api-key-wrap">
+            <input type="password" id="anthKeyInput" class="neon-input key-input"
+                   placeholder="Enter Anthropic API key…"
+                   aria-label="Anthropic API key" autocomplete="off" spellcheck="false">
+            <span id="anthKeyStatus" aria-live="polite"></span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ── Template Loaders ── -->
+    <section class="card template-card" aria-label="Prompt and schema templates">
+      <div class="template-row">
+
+        <div class="cfg-group">
+          <label class="dim" for="promptTpl">Example Prompts:</label>
+          <select id="promptTpl" class="neon-select">
+            <option value="">— Select —</option>
+            <option value="creative">Creative Writing</option>
+            <option value="code">Code Generation</option>
+            <option value="data">Data Analysis</option>
+            <option value="summarize">Summarization</option>
+            <option value="translate">Translation</option>
+          </select>
+          <button class="neon-btn btn-sm" id="loadPromptBtn">Load</button>
+        </div>
+
+        <div class="cfg-group" id="schemaTplGroup" style="display:none">
+          <label class="dim" for="schemaTpl">Schema Template:</label>
+          <select id="schemaTpl" class="neon-select">
+            <option value="">— Select —</option>
+            <option value="product">Product Review</option>
+            <option value="contact">Contact Info</option>
+            <option value="tasks">Task List</option>
+            <option value="sentiment">Sentiment Analysis</option>
+            <option value="recipe">Recipe</option>
+          </select>
+          <button class="neon-btn btn-sm" id="loadSchemaBtn">Load</button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── Prompt Input ── -->
+    <section class="card input-card" aria-label="Prompt input">
+      <label class="section-label" for="promptInput">Prompt</label>
+      <textarea id="promptInput" class="neon-ta" rows="5"
+                placeholder="Enter your prompt here…"
+                aria-label="Prompt input"></textarea>
+
+      <div id="schemaWrap" style="display:none">
+        <label class="section-label" for="schemaInput" style="margin-top:14px">JSON Schema</label>
+        <textarea id="schemaInput" class="neon-ta schema-ta" rows="6"
+                  placeholder='{"type":"object","properties":{}}'
+                  aria-label="JSON schema editor" spellcheck="false"></textarea>
+        <div id="schemaErr" class="schema-err" style="display:none" role="alert" aria-live="polite"></div>
+      </div>
+
+      <div class="action-row">
+        <button class="neon-btn btn-green" id="sendBtn">🚀 Send</button>
+        <button class="neon-btn btn-yellow" id="sendBothBtn">⚡ Send to Both</button>
+        <button class="neon-btn btn-red" id="clearBtn">🗑️ Clear</button>
+      </div>
+    </section>
+
+    <!-- ── Response Panels ── -->
+    <section class="card response-card" id="responsePanels" aria-label="API responses">
+
+      <div class="resp-panel openai-panel" id="primaryPanel">
+        <div class="resp-header">
+          <span class="resp-provider" id="primaryLabel">OpenAI</span>
+          <span class="resp-model" id="primaryModel"></span>
+          <div class="resp-status" id="primaryStatus" aria-live="polite"></div>
+          <span class="speed-badge" id="primaryBadge" style="display:none">⚡ Faster</span>
+        </div>
+        <div class="resp-body" id="primaryBody" aria-live="polite">
+          <p class="placeholder">Response will appear here…</p>
+        </div>
+      </div>
+
+      <div class="resp-panel anthropic-panel" id="compPanel" style="display:none">
+        <div class="resp-header">
+          <span class="resp-provider">Anthropic</span>
+          <span class="resp-model" id="compModel"></span>
+          <div class="resp-status" id="compStatus" aria-live="polite"></div>
+          <span class="speed-badge" id="compBadge" style="display:none">⚡ Faster</span>
+        </div>
+        <div class="resp-body" id="compBody" aria-live="polite">
+          <p class="placeholder">Comparison response will appear here…</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ── Metrics Dashboard ── -->
+    <section class="card metrics-card" aria-label="Performance metrics">
+      <h2 class="metrics-heading">📊 Metrics</h2>
+
+      <div class="metrics-grid">
+        <div class="metric-box">
+          <div class="metric-lbl">Response Time</div>
+          <div class="metric-val" id="mRT">--</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-lbl">Time to First Token</div>
+          <div class="metric-val" id="mTTFT">--</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-lbl">Tokens / sec</div>
+          <div class="metric-val" id="mTPS">--</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-lbl">Total Tokens</div>
+          <div class="metric-val" id="mTotal">--</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-lbl">Input Tokens</div>
+          <div class="metric-val" id="mIn">--</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-lbl">Output Tokens</div>
+          <div class="metric-val" id="mOut">--</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-lbl">Estimated Cost</div>
+          <div class="metric-val" id="mCost">--</div>
+        </div>
+      </div>
+
+      <div class="session-bar" aria-label="Session totals">
+        <span><span class="dim">Requests:</span> <span id="sReqs">0</span></span>
+        <span class="sep">|</span>
+        <span><span class="dim">Avg:</span> <span id="sAvg">--</span></span>
+        <span class="sep">|</span>
+        <span><span class="dim">Total Tokens:</span> <span id="sTokens">0</span></span>
+        <span class="sep">|</span>
+        <span><span class="dim">Total Cost:</span> <span id="sCost">$0.0000</span></span>
+      </div>
+    </section>
+
+  </div><!-- .app -->
+
+  <!-- ── Error Toast ── -->
+  <div class="err-toast" id="errToast" role="alert" aria-live="assertive" style="display:none">
+    <span aria-hidden="true">⚠️</span>
+    <span id="errMsg"></span>
+    <button class="toast-close" id="closeErr" aria-label="Dismiss">✕</button>
+  </div>
+
+  <script src="llm-switchboard.js"></script>
+</body>
+</html>
