@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NEON COSMOS | NASA Space Dashboard</title>
   <link rel="stylesheet" href="neon-cosmos.css">
-  <script src="https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.min.js"></script>
+  <script type="importmap">
+    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.min.js" } }
+  </script>
 </head>
 <body>
   <div class="scanlines" aria-hidden="true"></div>
@@ -29,9 +31,7 @@
             aria-controls="tab-threat" id="btn-threat">⚠️ THREAT MATRIX</button>
     <button class="tab-btn" data-tab="encounters" role="tab" aria-selected="false"
             aria-controls="tab-encounters" id="btn-encounters">🌠 CLOSE ENCOUNTERS</button>
-    <button class="tab-btn" data-tab="cosmic" role="tab" aria-selected="false"
-            aria-controls="tab-cosmic" id="btn-cosmic">🌌 COSMIC EYE</button>
-    <button class="tab-btn" data-tab="orbital" role="tab" aria-selected="false"
+<button class="tab-btn" data-tab="orbital" role="tab" aria-selected="false"
             aria-controls="tab-orbital" id="btn-orbital">🌍 ORBITAL VIEW</button>
   </nav>
 
@@ -151,44 +151,8 @@
       </div>
     </section>
 
-    <!-- TAB 3: COSMIC EYE -->
-    <section id="tab-cosmic" class="tab-content" role="tabpanel" aria-labelledby="btn-cosmic" hidden>
-      <div class="cosmic-controls" role="toolbar" aria-label="APOD navigation">
-        <button class="btn-neon" id="apod-prev" aria-label="Previous day">◀ PREV</button>
-        <input type="date" id="apod-date" class="neon-date" aria-label="Select date for astronomy picture">
-        <button class="btn-neon" id="apod-random" aria-label="Random date">✦ RANDOM</button>
-        <button class="btn-neon" id="apod-today" aria-label="Today's picture">◎ TODAY</button>
-        <button class="btn-neon" id="apod-next" aria-label="Next day">NEXT ▶</button>
-      </div>
 
-      <div class="cosmic-grid">
-        <div class="cosmic-image-panel panel rainbow-border">
-          <div id="apod-media-container">
-            <div class="signal-lost">INITIALIZING COSMIC EYE...</div>
-          </div>
-        </div>
-
-        <div class="cosmic-meta panel neon-border">
-          <div class="apod-title glitch" id="apod-title" data-text="LOADING...">LOADING...</div>
-          <div class="apod-meta-row">
-            <span class="apod-date-display" id="apod-date-display">--</span>
-            <span class="apod-type-badge" id="apod-type"></span>
-          </div>
-          <div class="apod-copyright" id="apod-copyright"></div>
-          <div class="apod-explanation-label">TRANSMISSION:</div>
-          <div class="apod-explanation" id="apod-explanation" tabindex="0">
-            <div class="signal-lost">AWAITING TRANSMISSION...</div>
-          </div>
-          <a id="apod-hd-link" class="btn-neon hd-btn pulse-btn" href="#"
-             target="_blank" rel="noopener noreferrer"
-             aria-label="Download full HD image" style="display:none">
-            █████ DOWNLOAD HD █████
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 4: ORBITAL VIEW -->
+<!-- TAB 4: ORBITAL VIEW -->
     <section id="tab-orbital" class="tab-content" role="tabpanel" aria-labelledby="btn-orbital" hidden>
       <div class="orbital-layout">
         <div class="orbital-canvas-wrap panel rainbow-border">
@@ -238,6 +202,6 @@
     <span>NEON COSMOS v1.0</span>
   </footer>
 
-  <script src="neon-cosmos.js"></script>
+  <script type="module" src="neon-cosmos.js"></script>
 </body>
 </html>

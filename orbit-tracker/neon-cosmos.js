@@ -1,10 +1,8 @@
-'use strict';
+import * as THREE from 'three';
 
 // ===== CONFIG =====
-const API_KEY    = 'E65f49nAvWDamimQT1hBA6fa6NhpJnvWrhraCb1j';
 const SENTRY_URL = 'https://ssd-api.jpl.nasa.gov/sentry.api';
 const CAD_URL    = 'https://ssd-api.jpl.nasa.gov/cad.api';
-const APOD_URL   = 'https://api.nasa.gov/planetary/apod';
 const LD_IN_AU   = 0.002569555; // 1 lunar distance in AU
 
 // ssd-api.jpl.nasa.gov returns no CORS headers, so browser cross-origin
@@ -18,7 +16,6 @@ let audioCtx      = null;
 let countdownTmr  = null;
 let sentryData    = [];
 let cadData       = [];
-let currentDate   = null;
 let refreshTimers = {};
 
 // ===== UTILS =====
@@ -380,106 +377,6 @@ function renderDistanceViz(data) {
   });
 }
 
-// ===== APOD API (COSMIC EYE) =====
-async function fetchAPOD(date) {
-  const container = document.getElementById('apod-media-container');
-  container.innerHTML = '<div class="signal-lost">INCOMING TRANSMISSION...</div>';
-
-  try {
-    let url = `${APOD_URL}?api_key=${API_KEY}`;
-    if (date) url += `&date=${date}`;
-
-    const data = await fetchWithRetry(url);
-    renderAPOD(data);
-    currentDate = data.date;
-    document.getElementById('apod-date').value = data.date;
-    updateTimestamp();
-  } catch (err) {
-    console.error('APOD API error:', err);
-    container.innerHTML =
-      `<div class="neon-error">⚠ TRANSMISSION FAILED — ${err.message}</div>`;
-  }
-}
-
-function renderAPOD(data) {
-  const container = document.getElementById('apod-media-container');
-
-  if (data.media_type === 'video') {
-    container.innerHTML =
-      `<iframe src="${data.url}" class="apod-video" allowfullscreen
-               title="${data.title}" loading="lazy"></iframe>`;
-  } else {
-    const img = document.createElement('img');
-    img.src       = data.url;
-    img.alt       = data.title || 'Astronomy Picture of the Day';
-    img.className = 'apod-image';
-    img.loading   = 'lazy';
-    container.innerHTML = '';
-    container.appendChild(img);
-  }
-
-  const titleEl = document.getElementById('apod-title');
-  titleEl.textContent = data.title || 'UNKNOWN';
-  titleEl.setAttribute('data-text', data.title || 'UNKNOWN');
-
-  document.getElementById('apod-date-display').textContent = data.date || '--';
-  document.getElementById('apod-copyright').textContent =
-    data.copyright ? `© ${data.copyright.trim()}` : '';
-  document.getElementById('apod-type').textContent =
-    data.media_type ? data.media_type.toUpperCase() : '';
-  document.getElementById('apod-explanation').textContent =
-    data.explanation || 'No description available.';
-
-  const hdLink = document.getElementById('apod-hd-link');
-  if (data.hdurl && data.media_type !== 'video') {
-    hdLink.href  = data.hdurl;
-    hdLink.style.display = 'block';
-  } else {
-    hdLink.style.display = 'none';
-  }
-}
-
-function initAPOD() {
-  const today = todayStr();
-  const dateInput = document.getElementById('apod-date');
-  dateInput.max   = today;
-  dateInput.value = today;
-
-  document.getElementById('apod-today').addEventListener('click', () => {
-    fetchAPOD(todayStr());
-    playBeep(440, 0.1);
-  });
-
-  document.getElementById('apod-random').addEventListener('click', () => {
-    const start = new Date('1995-06-16').getTime();
-    const end   = new Date().getTime();
-    const rand  = new Date(start + Math.random() * (end - start)).toISOString().slice(0, 10);
-    fetchAPOD(rand);
-    playBeep(660, 0.1);
-  });
-
-  document.getElementById('apod-prev').addEventListener('click', () => {
-    if (!currentDate) return;
-    const d = new Date(currentDate);
-    d.setDate(d.getDate() - 1);
-    if (d < new Date('1995-06-16')) return;
-    fetchAPOD(d.toISOString().slice(0, 10));
-    playBeep(330, 0.08);
-  });
-
-  document.getElementById('apod-next').addEventListener('click', () => {
-    if (!currentDate) return;
-    const d = new Date(currentDate);
-    d.setDate(d.getDate() + 1);
-    if (d > new Date()) return;
-    fetchAPOD(d.toISOString().slice(0, 10));
-    playBeep(550, 0.08);
-  });
-
-  document.getElementById('apod-date').addEventListener('change', e => {
-    if (e.target.value) fetchAPOD(e.target.value);
-  });
-}
 
 // ===== 3D EARTH VISUALIZATION =====
 let earthScene, earthCamera, earthRenderer, earthGroup, earthAtmo;
@@ -493,7 +390,7 @@ let earthRotSpeed  = 0.003;
 
 function buildEarth() {
   const canvas = document.getElementById('earth-canvas');
-  if (!canvas || !window.THREE) return;
+  if (!canvas) return;
 
   const w = canvas.parentElement.clientWidth  || 800;
   const h = canvas.parentElement.clientHeight || 520;
@@ -735,7 +632,6 @@ async function init() {
   initTabs();
   initRaveMode();
   initTimeline();
-  initAPOD();
 
   // Build Earth when orbital tab is first opened
   document.querySelector('[data-tab="orbital"]').addEventListener('click', () => {
@@ -748,7 +644,6 @@ async function init() {
   await Promise.allSettled([
     fetchSentry(),
     fetchCAD(),
-    fetchAPOD(todayStr()),
   ]);
 
   // After CAD data loads, refresh asteroid markers if Earth is already open
