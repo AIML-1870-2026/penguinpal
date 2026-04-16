@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌷 Blackjack AI Garden</title>
+  <link rel="stylesheet" href="styles/spring-theme.css">
+  <link rel="stylesheet" href="styles/animations.css">
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ── Header ── -->
+  <header class="panel">
+    <h1>🌷 Blackjack AI Garden</h1>
+    <div class="header-meta">
+      <div id="api-section">
+        <span id="api-status"><span class="status-badge missing">🔑 No API Key</span></span>
+        <input type="password" id="api-key-input" placeholder="Paste API key (sk-...)" style="width:220px;padding:0.4rem 0.6rem;border:1px solid var(--border-color);border-radius:6px;background:var(--bg-secondary);font-size:0.9rem;">
+        <button id="save-key-btn" class="btn-secondary">Save Key</button>
+      </div>
+      <div>
+        <div id="balance-display" class="balance-display">💰 $1000</div>
+        <div id="current-bet-display" style="font-size:0.85rem;color:var(--text-secondary);text-align:right"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Message Banner ── -->
+  <div id="message-banner"></div>
+
+  <!-- ── Game Area ── -->
+  <div id="game-area" class="panel">
+
+    <!-- Dealer Hand -->
+    <div class="hand-section">
+      <div class="hand-label">🤖 Dealer's Hand</div>
+      <div id="dealer-cards" class="cards-row"></div>
+      <div id="dealer-total" class="hand-total" style="font-size:1rem;color:var(--text-secondary)">Waiting...</div>
+    </div>
+
+    <hr style="border:none;border-top:1px dashed var(--border-color);margin:0.25rem 0">
+
+    <!-- Player Hand -->
+    <div class="hand-section">
+      <div class="hand-label">🌷 Your Hand</div>
+      <div id="player-cards" class="cards-row"></div>
+      <div id="player-total" class="hand-total">Waiting...</div>
+    </div>
+
+    <!-- AI Panel -->
+    <div id="ai-panel" class="panel" style="margin-top:0.5rem">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">
+        <span style="font-size:1.1rem">🤖</span>
+        <strong>AI Recommendation</strong>
+      </div>
+      <div id="ai-content">
+        <p style="color:var(--text-secondary);font-size:0.9rem;text-align:center;padding:0.5rem">Hit the AI button for a recommendation</p>
+      </div>
+    </div>
+
+    <!-- Betting -->
+    <div id="bet-section">
+      <div class="bet-chips">
+        <div class="chip chip-10"  data-value="10">$10</div>
+        <div class="chip chip-25"  data-value="25">$25</div>
+        <div class="chip chip-50"  data-value="50">$50</div>
+        <div class="chip chip-100" data-value="100">$100</div>
+        <div class="chip chip-500" data-value="500">$500</div>
+      </div>
+      <input type="number" id="bet-amount" value="25" min="1" max="1000">
+      <button id="clear-bet-btn" class="btn-secondary">Clear</button>
+      <button id="deal-btn" class="btn-primary">🌷 Deal</button>
+    </div>
+
+    <!-- Game Controls -->
+    <div id="game-controls" style="display:none">
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center">
+        <button id="hit-btn"    class="btn-primary">Hit</button>
+        <button id="stand-btn"  class="btn-secondary">Stand</button>
+        <button id="double-btn" class="btn-secondary">Double</button>
+        <button id="split-btn"  class="btn-secondary" disabled>Split</button>
+      </div>
+      <button id="ask-ai-btn" class="btn-secondary" style="display:none;margin-top:0.5rem">✨ Ask AI</button>
+    </div>
+
+  </div>
+
+  <!-- ── Bottom Panels ── -->
+  <div id="bottom-panels">
+
+    <!-- Analytics -->
+    <div class="panel">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-group="analytics" data-tab="tab-stats">🌸 Stats</button>
+        <button class="tab-btn" data-group="analytics" data-tab="tab-history">📜 History</button>
+      </div>
+
+      <div id="tab-stats" class="tab-pane active" data-group="analytics">
+        <h4 style="margin-bottom:0.5rem">Performance Garden</h4>
+        <div class="stat-grid">
+          <div class="stat-card"><span id="stat-hands" class="stat-value">0</span><span class="stat-label">Hands</span></div>
+          <div class="stat-card"><span id="stat-wins" class="stat-value">0</span><span class="stat-label">Wins</span></div>
+          <div class="stat-card"><span id="stat-win-rate" class="stat-value">0%</span><span class="stat-label">Win Rate</span></div>
+          <div class="stat-card"><span id="stat-blackjacks" class="stat-value">0</span><span class="stat-label">Blackjacks</span></div>
+          <div class="stat-card"><span id="stat-busts" class="stat-value">0</span><span class="stat-label">Busts</span></div>
+          <div class="stat-card"><span id="stat-net" class="stat-value">$0</span><span class="stat-label">Net</span></div>
+          <div class="stat-card"><span id="stat-avg-bet" class="stat-value">$0</span><span class="stat-label">Avg Bet</span></div>
+          <div class="stat-card"><span id="stat-peak" class="stat-value">$1000</span><span class="stat-label">Peak</span></div>
+        </div>
+        <div style="margin-top:0.5rem">
+          <canvas id="balance-chart" height="80"></canvas>
+        </div>
+        <div style="margin-top:0.75rem">
+          <div style="font-size:0.8rem;color:var(--text-secondary)">AI Recommendation Accuracy</div>
+          <div class="ai-accuracy-bar"><div id="accuracy-fill" class="accuracy-fill" style="width:0%"></div></div>
+          <div id="accuracy-label" style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.2rem">0% AI accuracy</div>
+        </div>
+      </div>
+
+      <div id="tab-history" class="tab-pane" data-group="analytics">
+        <div id="hand-history"></div>
+      </div>
+    </div>
+
+    <!-- Strategy & Auto-Play -->
+    <div class="panel">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-group="strategy" data-tab="tab-autoplay">🤖 Auto-Play</button>
+        <button class="tab-btn" data-group="strategy" data-tab="tab-heatmap">🗺️ Strategy</button>
+        <button class="tab-btn" data-group="strategy" data-tab="tab-whatif">🔮 What-If</button>
+      </div>
+
+      <div id="tab-autoplay" class="tab-pane active" data-group="strategy">
+        <h4 style="margin-bottom:0.5rem">Auto-Play Configuration</h4>
+        <div class="auto-settings">
+          <label>Bet Size<input type="number" id="auto-bet" value="50" min="10" max="500"></label>
+          <label>Stop below $<input type="number" id="stop-loss" value="500" min="0"></label>
+          <label>Stop above $<input type="number" id="stop-profit" value="2000" min="0"></label>
+          <label>Max Hands<input type="number" id="max-hands" value="100" min="1" max="500"></label>
+        </div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+          <button id="start-autoplay-btn" class="btn-primary">🌷 Start Auto-Play</button>
+          <button id="stop-autoplay-btn" class="btn-danger" disabled>⏹ Stop</button>
+        </div>
+        <div class="autoplay-status-row">
+          Status: <span id="autoplay-status" style="font-weight:600">Idle</span>
+        </div>
+      </div>
+
+      <div id="tab-heatmap" class="tab-pane" data-group="strategy">
+        <h4 style="margin-bottom:0.5rem">Basic Strategy Chart</h4>
+        <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:0.5rem">S=Stand, H=Hit, D=Double, P=Split</p>
+        <div class="heatmap-wrap"><canvas id="strategy-heatmap"></canvas></div>
+      </div>
+
+      <div id="tab-whatif" class="tab-pane" data-group="strategy">
+        <h4 style="margin-bottom:0.5rem">🔮 What-If Simulator</h4>
+        <p style="font-size:0.85rem;color:var(--text-secondary)">Outcome probabilities based on current AI recommendation:</p>
+        <div id="what-if-result" style="margin-top:0.5rem">
+          <p style="font-size:0.85rem;color:var(--text-secondary)">Play a hand to see simulated outcomes.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Result Overlay ── -->
+<div id="result-overlay">
+  <div class="result-card">
+    <div id="result-title" class="result-title"></div>
+    <div id="result-amount" class="result-amount"></div>
+    <div id="result-balance" style="margin:0.5rem 0;color:var(--text-secondary)"></div>
+    <button id="next-hand-btn" class="btn-primary" style="margin-top:0.75rem">Next Hand 🌷</button>
+  </div>
+</div>
+
+<!-- ── Debug Panel ── -->
+<div id="debug-panel" class="hidden">
+  <div class="debug-controls">
+    <strong style="color:#E2E8F0">🐛 Debug</strong>
+    <label style="color:#A0AEC0;font-size:0.8rem">Level:
+      <select id="log-level-select">
+        <option value="0">DEBUG</option>
+        <option value="1" selected>INFO</option>
+        <option value="2">WARN</option>
+        <option value="3">ERROR</option>
+      </select>
+    </label>
+    <button id="clear-logs-btn">Clear</button>
+    <button id="export-logs-btn">Export</button>
+    <span style="color:#718096;font-size:0.75rem">Ctrl+Shift+D to toggle</span>
+  </div>
+  <div id="log-output"></div>
+</div>
+
+<!-- ── Scripts (order matters) ── -->
+<script src="scripts/logger.js"></script>
+<script src="scripts/game.js"></script>
+<script src="scripts/ai-agent.js"></script>
+<script src="scripts/analytics.js"></script>
+<script src="scripts/visualizations.js"></script>
+<script src="scripts/ui.js"></script>
+</body>
+</html>
