@@ -6,8 +6,8 @@ const CAD_URL    = 'https://ssd-api.jpl.nasa.gov/cad.api';
 const LD_IN_AU   = 0.002569555; // 1 lunar distance in AU
 
 // ssd-api.jpl.nasa.gov returns no CORS headers, so browser cross-origin
-// requests are blocked. Route those URLs through allorigins proxy.
-const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+// requests are blocked. Route those URLs through corsproxy.io.
+const CORS_PROXY = 'https://corsproxy.io/?';
 
 // ===== STATE =====
 let raveModeOn    = false;
